@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+backup/
+**/__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+*.log
+
+# Migration snapshots contain signed media URLs and large local source copies.
+migration/images.csv
+migration/errors.json

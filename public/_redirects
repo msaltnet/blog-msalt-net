@@ -1,0 +1,2 @@
+# Keep legacy Tistory mobile permalinks pointing at the canonical desktop post.
+/m/* /:splat 301

@@ -1,0 +1,17 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { render } from 'astro:content';
+import TitleBanner from '../components/TitleBanner.astro';
+import PostMeta from '../components/PostMeta.astro';
+import Comments from '../components/Comments.astro';
+import { site } from '../data/site';
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, date, category, tags, description, coverImage, id } = post.data;
+---
+<BaseLayout title={`${title} | 맛소금`} description={description} canonical={`/${id}`} image={coverImage}>
+  <TitleBanner slot="banner" title={title} subtitle={new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Seoul'}).format(date)} />
+  <article class="entry"><PostMeta date={date} category={category} tags={tags} /><div class="entry-content"><Content /></div><Comments postId={id} /><nav class="entry-nav"><a href={`/category/${encodeURIComponent(category)}`}>← {category}의 다른 글</a><a href="/">처음으로 ↑</a></nav></article>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({ '@context':'https://schema.org','@type':'BlogPosting',headline:title,datePublished:date.toISOString(),description,mainEntityOfPage:`${site.url}/${id}`,image:coverImage ? new URL(coverImage,site.url).toString() : undefined })} />
+</BaseLayout>
+<style>.entry{max-width:790px}.entry-content{font-size:16px;line-height:1.95;overflow-wrap:anywhere}.entry-content :global(p){margin:0 0 1.35em}.entry-content :global(h2){font:500 27px/1.5 Georgia,"Noto Serif KR",serif;margin:2em 0 .8em}.entry-content :global(h3){font-size:21px;margin:1.8em 0 .7em}.entry-content :global(img){display:block;margin:1.5em auto;max-height:none}.entry-content :global(blockquote){margin:1.4em 0;padding:4px 20px;border-left:3px solid var(--green);color:#666}.entry-content :global(pre){overflow:auto;background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6}.entry-content :global(code){font-family:Consolas,monospace}.entry-content :global(table){display:block;overflow-x:auto;border-collapse:collapse}.entry-content :global(th),.entry-content :global(td){border:1px solid #ddd;padding:8px 12px}.entry-content :global(iframe){max-width:100%}.entry-nav{border-top:1px solid #eee;margin-top:50px;padding:22px 0;display:flex;justify-content:space-between;color:#666;font-size:13px}</style>

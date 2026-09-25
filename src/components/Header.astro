@@ -1,0 +1,7 @@
+---
+import { site } from '../data/site';
+---
+<header class="topbar"><a class="brand" href="/" aria-label={site.title}>msalt</a><nav><a href="/">Home</a><a href="/category/기술%20이야기">기술 이야기</a><a href="/category/감상문">감상문</a><a href="/rss">RSS</a></nav></header>
+<style>
+  .topbar{height:60px;padding:0 max(24px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f3f3f3;background:white}.brand{font-family:"Brush Script MT","Segoe Script",cursive;font-size:32px;font-weight:bold;letter-spacing:-2px}.topbar nav{display:flex;gap:26px;font-size:13px;color:#555}@media(max-width:600px){.topbar{height:54px;padding:0 18px}.topbar nav{gap:12px;font-size:12px}.topbar nav a:nth-child(2){display:none}}
+</style>

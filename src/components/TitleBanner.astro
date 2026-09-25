@@ -1,0 +1,5 @@
+---
+const { title, subtitle = '' } = Astro.props;
+---
+<div class="title-banner"><div><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div></div>
+<style>.title-banner{background:#00d47c;min-height:190px;display:flex;align-items:center}.title-banner>div{width:min(1180px,calc(100% - 40px));margin:auto}.title-banner h1{font-family:Georgia,"Noto Serif KR",serif;font-size:36px;font-weight:500;margin:0}.title-banner p{margin:12px 0 0;font-size:14px;color:#174a35}@media(max-width:600px){.title-banner{min-height:140px}.title-banner h1{font-size:28px}}</style>

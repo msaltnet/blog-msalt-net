@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TitleBanner from '../../components/TitleBanner.astro';
+import PostCard from '../../components/PostCard.astro';
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, 'ko'));
+  return tags.map((tag) => ({ params: { tag }, props: { tag } }));
+}
+const { tag } = Astro.props;
+const posts = (await getCollection('posts', ({ data }) => !data.draft && data.tags.includes(tag))).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf());
+const pages = Math.max(1, Math.ceil(posts.length / 20));
+---
+<BaseLayout title={`#${tag} | 맛소금`} canonical={`/tag/${encodeURIComponent(tag)}`}>
+  <TitleBanner slot="banner" title={`# ${tag}`} subtitle={`${posts.length}개의 글`} />
+  <section class="listing">{posts.map((post) => <div data-pageable><PostCard post={post} /></div>)}
+    <nav class="pagination" aria-label="페이지 이동"><a data-page-link="first" href="?page=1">처음</a><a data-page-link="prev" href="?page=1">← 이전</a><span data-page-label>1 / {pages}</span><a data-page-link="next" href="?page=2">다음 →</a><a data-page-link="last" href={`?page=${pages}`}>마지막</a></nav>
+  </section>
+</BaseLayout>
+<script>import '../../scripts/pagination';</script>
+<style>.listing{min-height:300px}.pagination{display:flex;justify-content:center;align-items:center;gap:26px;padding:28px 0;color:#777;font-size:13px}</style>

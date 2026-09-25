@@ -1,0 +1,8 @@
+---
+const { postId } = Astro.props;
+const commentModules = import.meta.glob('../data/comments/*.json', { eager: true, import: 'default' });
+const entry = commentModules[`../data/comments/${postId}.json`];
+const comments = Array.isArray(entry) ? entry : [];
+---
+{comments.length > 0 && <section class="comments"><h2>댓글 <span>{comments.length}</span></h2><ol>{comments.map((comment) => <li><div class="comment-meta"><strong>{comment.author || '익명'}</strong><time>{comment.date}</time></div><p>{comment.text}</p></li>)}</ol></section>}
+<style>.comments{border-top:1px solid #eee;margin-top:55px;padding-top:26px}.comments h2{font-size:19px;margin:0 0 12px}.comments h2 span{font-size:13px;color:#999;font-weight:400}.comments ol{list-style:none;padding:0}.comments li{border-top:1px solid #eee;padding:17px 0}.comment-meta{display:flex;gap:12px;font-size:13px}.comment-meta time{color:#999}.comments li p{font-size:14px;line-height:1.7;white-space:pre-wrap;margin:10px 0 0}</style>

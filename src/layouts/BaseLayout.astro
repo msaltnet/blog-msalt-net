@@ -1,0 +1,47 @@
+---
+import { site } from '../data/site';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Footer from '../components/Footer.astro';
+const { title = site.title, description = site.description, canonical = Astro.url.pathname, image = '' } = Astro.props;
+const canonicalUrl = new URL(canonical, site.url).toString();
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <slot name="head" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content={title === site.title ? 'website' : 'article'} />
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {image && <meta property="og:image" content={new URL(image, site.url).toString()} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'Blog', name: site.title,
+      description: site.description, url: site.url,
+    })} />
+  </head>
+  <body>
+    <Header />
+    <slot name="banner" />
+    <main class="site-main">
+      <div class="main-column"><slot /></div>
+      <Sidebar />
+    </main>
+    <Footer />
+  </body>
+</html>
+<style is:global>
+  :root{font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#242424;background:#fff;font-synthesis:none;text-rendering:optimizeLegibility;--green:#00d27a;--muted:#888;--line:#ececec}
+  *{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}a:hover{color:#00a963}.site-main{width:min(1180px,calc(100% - 40px));margin:44px auto 80px;display:grid;grid-template-columns:minmax(0,790px) 280px;gap:64px;align-items:start}.main-column{min-width:0}img{max-width:100%;height:auto}
+  @media(max-width:850px){.site-main{grid-template-columns:1fr;gap:40px;margin-top:30px}.sidebar{order:2}}
+</style>
