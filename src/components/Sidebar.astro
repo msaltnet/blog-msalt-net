@@ -1,11 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import { categoryOrder } from '../data/site';
+import { withBase } from '../utils/paths';
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 const counts = new Map(categoryOrder.map((name) => [name, posts.filter((post) => post.data.category === name).length]));
 ---
 <aside class="sidebar" aria-label="블로그 메뉴">
-  <figure class="blog-image"><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" /></figure>
+  <figure class="blog-image"><img src={withBase('/images/sidebar/blog-image.jpg')} alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" /></figure>
 
   <section class="intro">
     <p class="intro-copy">그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p>
@@ -18,8 +19,8 @@ const counts = new Map(categoryOrder.map((name) => [name, posts.filter((post) =>
     </blockquote>
   </section>
 
-  <section class="categories"><h2>카테고리</h2><ul>{categoryOrder.map((name) => <li><a href={`/category/${encodeURIComponent(name)}`}>{name}<span>{counts.get(name) ?? 0}</span></a></li>)}</ul></section>
-  <a class="side-link" href="/rss">RSS 구독 <span aria-hidden="true">↗</span></a>
+  <section class="categories"><h2>카테고리</h2><ul>{categoryOrder.map((name) => <li><a href={withBase(`/category/${encodeURIComponent(name)}`)}>{name}<span>{counts.get(name) ?? 0}</span></a></li>)}</ul></section>
+  <a class="side-link" href={withBase('/rss')}>RSS 구독 <span aria-hidden="true">↗</span></a>
 </aside>
 <style>
   .sidebar{font-size:14px}

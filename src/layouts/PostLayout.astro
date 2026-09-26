@@ -3,13 +3,14 @@ import BaseLayout from './BaseLayout.astro';
 import { render } from 'astro:content';
 import TitleBanner from '../components/TitleBanner.astro';
 import { site } from '../data/site';
+import { withBase } from '../utils/paths';
 const { post, isHome = false } = Astro.props;
 const { Content } = await render(post);
 const { title, date, category, description, coverImage, id } = post.data;
 ---
 <BaseLayout title={isHome ? site.title : `${title} | 맛소금`} description={description} canonical={isHome ? '/' : `/${id}`} image={coverImage}>
   <TitleBanner slot="banner" title={title} eyebrow={category} subtitle={new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Seoul'}).format(date)} isPost />
-  <article class="entry"><div class="entry-content"><Content /></div>{!isHome && <nav class="entry-nav"><a href={`/category/${encodeURIComponent(category)}`}>← {category}의 다른 글</a><a href="/">처음으로 ↑</a></nav>}</article>
+  <article class="entry"><div class="entry-content"><Content /></div>{!isHome && <nav class="entry-nav"><a href={withBase(`/category/${encodeURIComponent(category)}`)}>← {category}의 다른 글</a><a href={withBase('/')}>처음으로 ↑</a></nav>}</article>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify({ '@context':'https://schema.org','@type':'BlogPosting',headline:title,datePublished:date.toISOString(),description,mainEntityOfPage:`${site.url}/${id}`,image:coverImage ? new URL(coverImage,site.url).toString() : undefined })} />
 </BaseLayout>
 <style>.entry{max-width:790px}.entry-content{font-family:"Iropke Batang","Malgun Gothic",Tahoma,serif;font-size:18px;line-height:1.9;overflow-wrap:anywhere}.entry-content :global(p){margin:0 0 20px}.entry-content :global(h2){font:600 22px/1.8 "Malgun Gothic",Tahoma,sans-serif;color:#333;margin:30px 0 10px;padding:0 0 0 10px}.entry-content :global(h2[data-ke-size="size26"]){font-size:29.16px;line-height:1.8}.entry-content :global(h3){font:600 18px/1.8 "Malgun Gothic",Tahoma,sans-serif;color:#333;margin:30px 0 10px;padding:0 0 0 10px}.entry-content :global(img){display:block;margin:1.5em auto;max-height:none}.entry-content :global(blockquote){margin:1.4em 0;padding:4px 20px;border-left:3px solid var(--green);color:#666}.entry-content :global(pre){overflow:auto;background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6}.entry-content :global(code){font-family:Consolas,monospace}.entry-content :global(table){display:block;overflow-x:auto;border-collapse:collapse}.entry-content :global(th),.entry-content :global(td){border:1px solid #ddd;padding:8px 12px}.entry-content :global(iframe){max-width:100%}.entry-nav{border-top:1px solid #eee;margin-top:50px;padding:22px 0;display:flex;justify-content:space-between;color:#666;font-size:13px}</style>

@@ -1,17 +1,18 @@
 ---
 import { categoryOrder, site } from '../data/site';
+import { withBase } from '../utils/paths';
 ---
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="/" aria-label={site.title}><img src="/logo.png" alt={site.title} width="151" height="32" /></a>
+    <a class="brand" href={withBase('/')} aria-label={site.title}><img src={withBase('/logo.png')} alt={site.title} width="151" height="32" /></a>
     <div class="tools">
       <details class="category-menu">
         <summary>분류 보기 <span aria-hidden="true">⌄</span></summary>
         <nav class="category-panel" aria-label="카테고리">
-          {categoryOrder.map((category) => <a href={`/category/${encodeURIComponent(category)}`}>{category}</a>)}
+          {categoryOrder.map((category) => <a href={withBase(`/category/${encodeURIComponent(category)}`)}>{category}</a>)}
         </nav>
       </details>
-      <form class="search" action="/search" method="get" role="search">
+      <form class="search" action={withBase('/search')} method="get" role="search">
         <label class="sr-only" for="site-search">블로그 검색</label>
         <input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" />
         <button type="submit" aria-label="검색">

@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site';
+import { withBase } from '../utils/paths';
 ---
-<footer><div><a href="/">{site.title}</a><span>© {new Date().getFullYear()} 맛소금</span></div></footer>
+<footer><div><a href={withBase('/')}>{site.title}</a><span>© {new Date().getFullYear()} 맛소금</span></div></footer>
 <style>footer{border-top:1px solid #eee;padding:26px 20px;color:#888;font-size:12px}footer>div{width:min(1180px,100%);margin:auto;display:flex;justify-content:space-between}</style>

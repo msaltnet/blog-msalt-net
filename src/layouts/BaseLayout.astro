@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Footer from '../components/Footer.astro';
+import { withBase } from '../utils/paths';
 const { title = site.title, description = site.description, canonical = Astro.url.pathname, image = '' } = Astro.props;
 const canonicalUrl = new URL(canonical, site.url).toString();
 ---
@@ -27,8 +28,8 @@ const canonicalUrl = new URL(canonical, site.url).toString();
     <meta property="og:url" content={canonicalUrl} />
     {image && <meta property="og:image" content={new URL(image, site.url).toString()} />}
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
-    <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={withBase('/rss')} />
+    <link rel="icon" href={withBase('/favicon.ico')} sizes="any" />
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org', '@type': 'Blog', name: site.title,
       description: site.description, url: site.url,

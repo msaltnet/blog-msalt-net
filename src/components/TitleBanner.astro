@@ -1,11 +1,12 @@
 ---
 const { title, subtitle = '', eyebrow = '', isPost = false } = Astro.props;
+import { withBase } from '../utils/paths';
 ---
 <section class:list={['title-banner', { 'post-banner': isPost }]} aria-label={eyebrow || title}>
   <div class="banner-inner">
     {eyebrow && (eyebrow === '검색' || eyebrow === '태그 검색'
       ? <span class="eyebrow">{eyebrow}</span>
-      : <a class="eyebrow" href={`/category/${encodeURIComponent(eyebrow)}`}>{eyebrow}</a>)}
+      : <a class="eyebrow" href={withBase(`/category/${encodeURIComponent(eyebrow)}`)}>{eyebrow}</a>)}
     <h1>{title}</h1>
     {subtitle && <p>{subtitle}</p>}
   </div>
