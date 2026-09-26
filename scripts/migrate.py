@@ -9,7 +9,6 @@ import html
 import json
 import re
 import shutil
-from collections import defaultdict
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -88,6 +87,7 @@ class MarkdownConverter(HTMLParser):
         self.drop_depth = 0
         self.raw_tag: str | None = None
         self.raw_depth = 0
+        self.sized_heading: str | None = None
 
     def _append(self, value: str) -> None:
         if self.raw_tag:
@@ -154,7 +154,11 @@ class MarkdownConverter(HTMLParser):
         if tag in {"p", "div", "section", "figure", "figcaption", "ul", "ol", "li", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote"}:
             self._block()
         if tag.startswith("h") and len(tag) == 2 and tag[1].isdigit():
-            self.parts.append("#" * int(tag[1]) + " ")
+            if values.get("data-ke-size"):
+                self.sized_heading = tag
+                self.parts.append(self._safe_tag(tag, [("data-ke-size", values["data-ke-size"])]))
+            else:
+                self.parts.append("#" * int(tag[1]) + " ")
         elif tag in {"strong", "b"}:
             self.parts.append("**")
             self.inline_stack.append("**")
@@ -222,6 +226,11 @@ class MarkdownConverter(HTMLParser):
                 if self.raw_depth <= 0:
                     self.raw_tag = None
             return
+        if self.sized_heading == tag:
+            self.parts.append(f"</{tag}>")
+            self.sized_heading = None
+            self._block()
+            return
         if tag in {"p", "div", "section", "figure", "figcaption", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote"}:
             if tag in {"ul", "ol"} and self.list_stack:
                 self.list_stack.pop()
@@ -239,7 +248,15 @@ class MarkdownConverter(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self.dropped_tag:
             return
-        self.parts.append(data)
+        if self.raw_tag == "pre":
+            # HTMLParser decodes escaped code such as &lt;tag&gt; before this
+            # callback. Escape it again so Markdown's HTML parser displays the
+            # example as code instead of treating it as live HTML markup.
+            self.parts.append(html.escape(data, quote=False))
+        elif self.sized_heading:
+            self.parts.append(html.escape(data, quote=False))
+        else:
+            self.parts.append(data)
 
     def convert(self, fragment: str) -> tuple[str, list[str]]:
         self.feed(fragment)
@@ -287,7 +304,6 @@ def main() -> int:
     parser.add_argument("--backup", default="backup")
     parser.add_argument("--posts", default="src/content/posts")
     parser.add_argument("--assets", default="public/images/posts")
-    parser.add_argument("--comments", default="src/data/comments")
     args = parser.parse_args()
 
     with Path(args.inventory).open(newline="", encoding="utf-8-sig") as handle:
@@ -297,17 +313,9 @@ def main() -> int:
     if image_path.exists():
         with image_path.open(newline="", encoding="utf-8-sig") as handle:
             image_rows = {(row.get("post_id", ""), row.get("source_url", "")): row for row in csv.DictReader(handle)}
-    comment_file = Path(args.backup) / "metadata" / "comments.json"
-    comments_by_post: dict[str, list[dict[str, str]]] = defaultdict(list)
-    if comment_file.exists():
-        for record in json.loads(comment_file.read_text(encoding="utf-8")):
-            comments_by_post[str(record.get("post_id", ""))].append(record)
-
     post_root = Path(args.posts)
     asset_root = Path(args.assets)
-    comment_root = Path(args.comments)
     post_root.mkdir(parents=True, exist_ok=True)
-    comment_root.mkdir(parents=True, exist_ok=True)
     errors: list[dict[str, str]] = []
     generated = 0
     copied_assets: set[str] = set()
@@ -331,7 +339,6 @@ def main() -> int:
             cover_image = local_assets[0] if local_assets else ""
             markdown = frontmatter(post, tags, cover_image, body)
             (post_root / f"{post_id}.md").write_text(markdown, encoding="utf-8")
-            (comment_root / f"{post_id}.json").write_text(json.dumps(comments_by_post.get(post_id, []), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             generated += 1
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             errors.append({"id": post_id, "error": f"{type(exc).__name__}: {exc}"})
@@ -340,12 +347,11 @@ def main() -> int:
         "posts_in_inventory": len(posts),
         "posts_generated": generated,
         "body_assets_localized": len(copied_assets),
-        "comments_exported": sum(len(records) for records in comments_by_post.values()),
         "errors": errors,
     }
     report_path = Path("migration/conversion-report.json")
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Posts: {generated}/{len(posts)}; body assets localized: {len(copied_assets)}; comments: {report['comments_exported']}; errors: {len(errors)} ({report_path})")
+    print(f"Posts: {generated}/{len(posts)}; body assets localized: {len(copied_assets)}; errors: {len(errors)} ({report_path})")
     return 1 if errors else 0
 
 

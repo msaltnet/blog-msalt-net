@@ -12,6 +12,10 @@ const canonicalUrl = new URL(canonical, site.url).toString();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css" />
     <slot name="head" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -24,7 +28,7 @@ const canonicalUrl = new URL(canonical, site.url).toString();
     {image && <meta property="og:image" content={new URL(image, site.url).toString()} />}
     <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
     <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org', '@type': 'Blog', name: site.title,
       description: site.description, url: site.url,
@@ -41,7 +45,7 @@ const canonicalUrl = new URL(canonical, site.url).toString();
   </body>
 </html>
 <style is:global>
-  :root{font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#242424;background:#fff;font-synthesis:none;text-rendering:optimizeLegibility;--green:#00d27a;--muted:#888;--line:#ececec}
+  :root{font-family:"Malgun Gothic",Tahoma,sans-serif;color:#242424;background:#fff;font-synthesis:none;text-rendering:optimizeLegibility;--green:#00d27a;--muted:#888;--line:#ececec}
   *{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}a:hover{color:#00a963}.site-main{width:min(1180px,calc(100% - 40px));margin:44px auto 80px;display:grid;grid-template-columns:minmax(0,790px) 280px;gap:64px;align-items:start}.main-column{min-width:0}img{max-width:100%;height:auto}
   @media(max-width:850px){.site-main{grid-template-columns:1fr;gap:40px;margin-top:30px}.sidebar{order:2}}
 </style>

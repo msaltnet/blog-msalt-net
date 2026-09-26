@@ -13,7 +13,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft && data.ta
 const pages = Math.max(1, Math.ceil(posts.length / 20));
 ---
 <BaseLayout title={`#${tag} | 맛소금`} canonical={`/tag/${encodeURIComponent(tag)}`}>
-  <TitleBanner slot="banner" title={`# ${tag}`} subtitle={`${posts.length}개의 글`} />
+  <TitleBanner slot="banner" title={`# ${tag}`} eyebrow="태그 검색" subtitle={`총 ${posts.length}개`} />
   <section class="listing">{posts.map((post) => <div data-pageable><PostCard post={post} /></div>)}
     <nav class="pagination" aria-label="페이지 이동"><a data-page-link="first" href="?page=1">처음</a><a data-page-link="prev" href="?page=1">← 이전</a><span data-page-label>1 / {pages}</span><a data-page-link="next" href="?page=2">다음 →</a><a data-page-link="last" href={`?page=${pages}`}>마지막</a></nav>
   </section>

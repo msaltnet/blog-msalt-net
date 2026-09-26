@@ -1,0 +1,231 @@
+{
+  "posts_reviewed": 320,
+  "text_similarity_threshold": 0.97,
+  "below_threshold": [
+    {
+      "id": "323",
+      "title": "[T.Viewer] electron + jest desktop application에 codecov 적용기",
+      "source_chars": 1446,
+      "markdown_chars": 1446,
+      "text_similarity": 0.96404,
+      "source_images": 2,
+      "markdown_local_images": 3,
+      "text_diff_samples": [
+        {
+          "source_only": "codecov",
+          "markdown_only": "*codecov*"
+        },
+        {
+          "source_only": "travis",
+          "markdown_only": "*travis*"
+        },
+        {
+          "source_only": "codecov",
+          "markdown_only": "*codecov*"
+        },
+        {
+          "source_only": "travis",
+          "markdown_only": "*travis*"
+        },
+        {
+          "source_only": "codecov",
+          "markdown_only": "*codecov*"
+        }
+      ]
+    },
+    {
+      "id": "321",
+      "title": "[Python] Pacakge에서 모듈간 import 에러 __init__.py 순서",
+      "source_chars": 900,
+      "markdown_chars": 888,
+      "text_similarity": 0.88255,
+      "source_images": 1,
+      "markdown_local_images": 2,
+      "text_diff_samples": [
+        {
+          "source_only": "__",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "__",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "__",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "__",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "",
+          "markdown_only": "init.py from simulator.data"
+        }
+      ]
+    },
+    {
+      "id": "275",
+      "title": "[T.Viewer 개발일기] 1. README.md로 시작",
+      "source_chars": 2252,
+      "markdown_chars": 2025,
+      "text_similarity": 0.93991,
+      "source_images": 1,
+      "markdown_local_images": 2,
+      "text_diff_samples": [
+        {
+          "source_only": "**",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "** ##",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "##",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "##",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "[",
+          "markdown_only": ""
+        }
+      ]
+    },
+    {
+      "id": "231",
+      "title": "Software Architect에 대한 단상",
+      "source_chars": 702,
+      "markdown_chars": 708,
+      "text_similarity": 0.95745,
+      "source_images": 1,
+      "markdown_local_images": 2,
+      "text_diff_samples": [
+        {
+          "source_only": "Architect",
+          "markdown_only": "*Architect*"
+        },
+        {
+          "source_only": "Architect",
+          "markdown_only": "*Architect*"
+        },
+        {
+          "source_only": "Architect",
+          "markdown_only": "*Architect*"
+        }
+      ]
+    },
+    {
+      "id": "166",
+      "title": "친환경 깍지벌레 퇴치법!",
+      "source_chars": 1137,
+      "markdown_chars": 1289,
+      "text_similarity": 0.93405,
+      "source_images": 6,
+      "markdown_local_images": 7,
+      "text_diff_samples": [
+        {
+          "source_only": "",
+          "markdown_only": "["
+        },
+        {
+          "source_only": "",
+          "markdown_only": "](http://blog.naver.com/PostView.nhn?blogId=hssn2710&logNo=220637040895&parentCategoryNo=&categoryNo=2077&viewDate=&isShowPopularPosts=false&from=postView)"
+        },
+        {
+          "source_only": "~~",
+          "markdown_only": ""
+        },
+        {
+          "source_only": "~~",
+          "markdown_only": ""
+        }
+      ]
+    },
+    {
+      "id": "65",
+      "title": "등심환 선인장 꽃 피우기 성공",
+      "source_chars": 775,
+      "markdown_chars": 915,
+      "text_similarity": 0.91716,
+      "source_images": 3,
+      "markdown_local_images": 4,
+      "text_diff_samples": [
+        {
+          "source_only": "",
+          "markdown_only": "["
+        },
+        {
+          "source_only": "",
+          "markdown_only": "](http://echo003.tistory.com/entry/%EA%B2%8C%EB%B0%9C%EC%84%A0%EC%9D%B8%EC%9E%A5-%EA%BD%83-%ED%94%BC%EC%9A%B0%EB%8A%94-%EB%B0%A9%EB%B2%95)"
+        }
+      ]
+    },
+    {
+      "id": "46",
+      "title": "물이 맑으면 고기가 없고, 사람이 너무 따지면 따르는 이가 없다",
+      "source_chars": 98,
+      "markdown_chars": 92,
+      "text_similarity": 0.96842,
+      "source_images": 0,
+      "markdown_local_images": 0,
+      "text_diff_samples": [
+        {
+          "source_only": "2015.",
+          "markdown_only": ""
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "title": "맛집) 행주산 국수",
+      "source_chars": 63,
+      "markdown_chars": 67,
+      "text_similarity": 0.96923,
+      "source_images": 2,
+      "markdown_local_images": 3,
+      "text_diff_samples": [
+        {
+          "source_only": "",
+          "markdown_only": "* *"
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "title": "초록이들 소개 - 1",
+      "source_chars": 455,
+      "markdown_chars": 491,
+      "text_similarity": 0.96195,
+      "source_images": 2,
+      "markdown_local_images": 3,
+      "text_diff_samples": [
+        {
+          "source_only": "",
+          "markdown_only": "["
+        },
+        {
+          "source_only": "",
+          "markdown_only": "](http://blog.daum.net/deli_salt/5)"
+        }
+      ]
+    }
+  ],
+  "source_iframes_by_host": {
+    "www.youtube.com": 97,
+    "": 2
+  },
+  "markdown_iframes_by_host": {
+    "www.youtube.com": 97,
+    "": 2
+  },
+  "source_media_elements": {},
+  "markdown_media_elements": {},
+  "downloadable_attachment_links_by_host": {
+    "developer.apple.com": 1,
+    "www.w3c.or.kr": 1
+  }
+}

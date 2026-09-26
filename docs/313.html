@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"[T.Viewer 개발일기] 13. Release 준비","datePublished":"2020-08-09T13:28:23.000Z","description":"Tizen Log Viewer의 개발을 시작하게 된 계기는, 작년에 타이젠을 이용한 해커톤 행사에서 참가자들로부터 로그 보는 것이 너무 불편하다고 많이 의견을 받았기 때문이다. 간단하게 만들어 볼라고 개인적으로 시작을 했는데, 늘 그렇듯 먹고 사는 일에 치여서 미루고 미루다가 올해 또 해커톤을 한다고 해서...바짝 준비했다.ㅋㅋ 막상 사람들에게 소개하려고 하니 그것도 준비가 적잖히 필요한것 같다. (2020 온라인 해커톤) 서울 하드웨어 해커톤 탑메이커 - 언택트 시대 필요한 기술 편 우선, 가벼운 오픈소스 프로젝트이기 때문에 별도의 사이트나 배포처를 만들지 않고, 오로지 github 만으로 채널을 단일화해서 진행을 해보려고 한다. 몇가지 참조해 볼 만한 프로젝트를 찾아봤는데, VS Code 프로젝트가 ..","mainEntityOfPage":"https://blog.msalt.net/313","image":"https://blog.msalt.net/images/posts/313/002.gif"}</script><title>[T.Viewer 개발일기] 13. Release 준비 | 맛소금</title><meta name="description" content="Tizen Log Viewer의 개발을 시작하게 된 계기는, 작년에 타이젠을 이용한 해커톤 행사에서 참가자들로부터 로그 보는 것이 너무 불편하다고 많이 의견을 받았기 때문이다. 간단하게 만들어 볼라고 개인적으로 시작을 했는데, 늘 그렇듯 먹고 사는 일에 치여서 미루고 미루다가 올해 또 해커톤을 한다고 해서...바짝 준비했다.ㅋㅋ 막상 사람들에게 소개하려고 하니 그것도 준비가 적잖히 필요한것 같다. (2020 온라인 해커톤) 서울 하드웨어 해커톤 탑메이커 - 언택트 시대 필요한 기술 편 우선, 가벼운 오픈소스 프로젝트이기 때문에 별도의 사이트나 배포처를 만들지 않고, 오로지 github 만으로 채널을 단일화해서 진행을 해보려고 한다. 몇가지 참조해 볼 만한 프로젝트를 찾아봤는데, VS Code 프로젝트가 .."><link rel="canonical" href="https://blog.msalt.net/313"><meta property="og:type" content="article"><meta property="og:site_name" content="고마워서 만든 블로그 by 맛소금"><meta property="og:title" content="[T.Viewer 개발일기] 13. Release 준비 | 맛소금"><meta property="og:description" content="Tizen Log Viewer의 개발을 시작하게 된 계기는, 작년에 타이젠을 이용한 해커톤 행사에서 참가자들로부터 로그 보는 것이 너무 불편하다고 많이 의견을 받았기 때문이다. 간단하게 만들어 볼라고 개인적으로 시작을 했는데, 늘 그렇듯 먹고 사는 일에 치여서 미루고 미루다가 올해 또 해커톤을 한다고 해서...바짝 준비했다.ㅋㅋ 막상 사람들에게 소개하려고 하니 그것도 준비가 적잖히 필요한것 같다. (2020 온라인 해커톤) 서울 하드웨어 해커톤 탑메이커 - 언택트 시대 필요한 기술 편 우선, 가벼운 오픈소스 프로젝트이기 때문에 별도의 사이트나 배포처를 만들지 않고, 오로지 github 만으로 채널을 단일화해서 진행을 해보려고 한다. 몇가지 참조해 볼 만한 프로젝트를 찾아봤는데, VS Code 프로젝트가 .."><meta property="og:url" content="https://blog.msalt.net/313"><meta property="og:image" content="https://blog.msalt.net/images/posts/313/002.gif"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/rss+xml" title="고마워서 만든 블로그 by 맛소금" href="/rss"><link rel="icon" href="/favicon.ico" sizes="any"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"고마워서 만든 블로그 by 맛소금","description":"개발, 책, 일상에 대한 기록","url":"https://blog.msalt.net"}</script><link rel="stylesheet" href="/_astro/TitleBanner.C9ln51x0.css"><style>.entry[data-astro-cid-ssdmjifj]{max-width:790px}.entry-content[data-astro-cid-ssdmjifj]{overflow-wrap:anywhere;font-family:Iropke Batang,Malgun Gothic,Tahoma,serif;font-size:18px;line-height:1.9}.entry-content[data-astro-cid-ssdmjifj] p{margin:0 0 20px}.entry-content[data-astro-cid-ssdmjifj] h2{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 22px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] h2[data-ke-size=size26]{font-size:29.16px;line-height:1.8}.entry-content[data-astro-cid-ssdmjifj] h3{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 18px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] img{max-height:none;margin:1.5em auto;display:block}.entry-content[data-astro-cid-ssdmjifj] blockquote{border-left:3px solid var(--green);color:#666;margin:1.4em 0;padding:4px 20px}.entry-content[data-astro-cid-ssdmjifj] pre{background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6;overflow:auto}.entry-content[data-astro-cid-ssdmjifj] code{font-family:Consolas,monospace}.entry-content[data-astro-cid-ssdmjifj] table{border-collapse:collapse;display:block;overflow-x:auto}.entry-content[data-astro-cid-ssdmjifj] th,.entry-content[data-astro-cid-ssdmjifj] td{border:1px solid #ddd;padding:8px 12px}.entry-content[data-astro-cid-ssdmjifj] iframe{max-width:100%}.entry-nav[data-astro-cid-ssdmjifj]{color:#666;border-top:1px solid #eee;justify-content:space-between;margin-top:50px;padding:22px 0;font-size:13px;display:flex}
+</style></head><body><header class="topbar" data-astro-cid-nen7h5rs><div class="topbar-inner" data-astro-cid-nen7h5rs><a class="brand" href="/" aria-label="고마워서 만든 블로그 by 맛소금" data-astro-cid-nen7h5rs><img src="/logo.png" alt="고마워서 만든 블로그 by 맛소금" width="151" height="32" data-astro-cid-nen7h5rs></a><div class="tools" data-astro-cid-nen7h5rs><details class="category-menu" data-astro-cid-nen7h5rs><summary data-astro-cid-nen7h5rs>분류 보기 <span aria-hidden="true" data-astro-cid-nen7h5rs>⌄</span></summary><nav class="category-panel" aria-label="카테고리" data-astro-cid-nen7h5rs><a href="/category/About%20Blog" data-astro-cid-nen7h5rs>About Blog</a><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-nen7h5rs>사람생각</a><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-nen7h5rs>초록이들</a><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-nen7h5rs>나의 경험담</a><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-nen7h5rs>감상문</a><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-nen7h5rs>만들기</a><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-nen7h5rs>육아와 가사</a><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-nen7h5rs>이달의 노래</a><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-nen7h5rs>좋은 씨앗</a><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-nen7h5rs>기술 이야기</a><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-nen7h5rs>타이젠 Tizen</a></nav></details><form class="search" action="/search" method="get" role="search" data-astro-cid-nen7h5rs><label class="sr-only" for="site-search" data-astro-cid-nen7h5rs>블로그 검색</label><input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" data-astro-cid-nen7h5rs><button type="submit" aria-label="검색" data-astro-cid-nen7h5rs><svg viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-nen7h5rs><circle cx="10.8" cy="10.8" r="6.4" data-astro-cid-nen7h5rs></circle><path d="m16 16 4.2 4.2" data-astro-cid-nen7h5rs></path></svg></button></form></div></div></header><section class="title-banner post-banner" aria-label="나의 경험담" data-astro-cid-hws4xp7b><div class="banner-inner" data-astro-cid-hws4xp7b><a class="eyebrow" href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-hws4xp7b>나의 경험담</a><h1 data-astro-cid-hws4xp7b>[T.Viewer 개발일기] 13. Release 준비</h1><p data-astro-cid-hws4xp7b>2020. 8. 9. 22:28</p></div></section><main class="site-main"><div class="main-column"><article class="entry" data-astro-cid-ssdmjifj><div class="entry-content" data-astro-cid-ssdmjifj><p>Tizen Log Viewer의 개발을 시작하게 된 계기는, 작년에 타이젠을 이용한 해커톤 행사에서 참가자들로부터 로그 보는 것이 너무 불편하다고 많이 의견을 받았기 때문이다. 간단하게 만들어 볼라고 개인적으로 시작을 했는데, 늘 그렇듯 먹고 사는 일에 치여서 미루고 미루다가 올해 또 해커톤을 한다고 해서…바짝 준비했다.ㅋㅋ 막상 사람들에게 소개하려고 하니 그것도 준비가 적잖히 필요한것 같다.</p>
+<p><a href="https://www.topmaker.kr/305">(2020 온라인 해커톤) 서울 하드웨어 해커톤 탑메이커 - 언택트 시대 필요한 기술 편 </a></p>
+<p>우선, 가벼운 오픈소스 프로젝트이기 때문에 별도의 사이트나 배포처를 만들지 않고, 오로지 github 만으로 채널을 단일화해서 진행을 해보려고 한다. 몇가지 참조해 볼 만한 프로젝트를 찾아봤는데, <a href="https://github.com/microsoft/vscode">VS Code</a> 프로젝트가 너무 좋았다.</p>
+<blockquote>
+<p>This repository ("Code - OSS") is where we (Microsoft) develop the Visual Studio Code product. Not only do we work on code and issues here, we also publish our roadmap, monthly iteration plans, and our endgame plans. This source code is available to everyone under the standard MIT license.</p>
+</blockquote>
+<p>github을 아주 잘 쓰고 있는 것 같다! 형식과 내용 모두 컨닝해야겠다. 그리고 wiki도 잘 쓰고 있는데…그것도 컨닝해야겠다.ㅋ 짱이당.</p>
+<h2 id="다시-쓰는-readme">다시 쓰는 README</h2>
+<p>기존의 것이 기본적인 내용은 있었다만 내용이 충실하지는 않았던것 같다. 몇몇 사람이 어떻게 사용하는지 묻기도 했으니…ㅠ</p>
+<p>이번 기회에 다른 프로젝트는 README를 어떻게 작성하였는지 살펴보았다. 정해진 형식은 없지만 주요하게 전면에 내세우는 내용들은 비슷했다.</p>
+<ul>
+<li>
+<p><strong>2~3문장으로 이루어진 간단한 소개 with 시선을 끄는 스냅샷</strong></p>
+</li>
+<li>
+<p>설치 &amp; 사용 방법</p>
+</li>
+<li>
+<p>프로젝트 참여 방법</p>
+</li>
+<li>
+<p>라이센스</p>
+</li>
+</ul>
+<p><strong>핵심은 간결하게 작성하는 것이다. 자세한 내용은 다른 글이나 wiki의 링크로 대체하여 최대한 간결함을 유지한다.</strong> 언어는 주로 영어인데, 나는 실사용자를 고려해서 국문과 함께 작성하기로 했다.</p>
+<p>어려운 영어가 필요한 부분은 없지만 <strong>거부감을 느낄 수도 있고, 정보 전달 과정에서 손실이 발생한다. 같은 내용을 작성해도 놓치고 넘어가는 부분이 발생한다.ㅠ</strong></p>
+<h2 id="라이센스-고지">라이센스 고지</h2>
+<p>Electron, Vuetify, Ace Editor등 오픈소스들을 유용하게 잘 쓰고 있는데, 그 사실을, 라이센스 고지를 어떻게 해야 할지 몰라서 검색을 해봤다.</p>
+<p><a href="https://kyeonjung.tistory.com/15">외부 라이브러리의 라이센스 고지 방법</a></p>
+<p>딱히 고지 않해도 큰일은 없을 것 같지만, 감사함을 꼭 표시하고 싶었다.</p>
+<p><code>package.json</code>을 보면 정리가 잘 되어 있다. 실제 제품에 포함되는 것은 몇개 안되는데, <code>core-js</code>가 뭐지..;; npm 사이트에서 찾아봤는데, 폴리필 라이브러리구나. 저자가 구직중이라고 적어놨네ㅋ</p>
+<pre class="prettyprint 1c"><code>  "dependencies": {
+    "ace-builds": "^1.4.7",
+    "core-js": "^3.1.2",
+    "electron-store": "^6.0.0",
+    "electron-window-state": "^5.0.3",
+    "typeface-roboto": "0.0.75",
+    "vue": "^2.6.10",
+    "vuetify": "^2.1.0"
+  },
+  "devDependencies": {
+</code></pre>
+<p>소스 저장소에도 파일을 만들어서 올리고, 메뉴에도 추가해야겠다.</p>
+<pre class="prettyprint haml"><code>OSS Notice | T.Viewer
+Copyright (c) 2019, msalt.net Jeong Seongmoon
+
+This application use Open Source Software (OSS). You can find the source code of these open source project, along with applicable license information, below. We are deeply grateful to these developers for their work and contributions.
+
+1. Ace Editor
+  - https://github.com/ajaxorg/ace
+  - Copyright (c) 2010, Ajax.org B.V.
+  - BSD License
+1. Vue
+  - https://github.com/vuejs/vue
+  - Copyright (c) 2013-present, Yuxi (Evan) You
+  - MIT License
+1. Vuetify
+  - https://github.com/vuetifyjs/vuetify
+  - Copyright (c) 2016-2020 John Jeremy Leider
+  - MIT License
+1. core-js
+  - https://github.com/zloirock/core-js
+  - Copyright (c) 2014-2020 Denis Pushkarev
+  - MIT License
+1. electron-store
+  - https://github.com/sindresorhus/electron-store
+  - Copyright (c) Sindre Sorhus
+  - MIT License
+1. electron-window-state
+  - https://github.com/mawie81/electron-window-state
+  - Copyright (c) 2015 Jakub Szwacz, Marcel Wiehle
+  - MIT License
+</code></pre>
+<h2 id="application-menu">Application Menu</h2>
+<p>사실 이건 진작에 처리를 했어야 하는데, 막상 릴리즈 할 때가 되니까 눈에 들어왔다. 다행이도 딱히 많이 작성할 만한 내용은 없는 것 같다고 스스로 판단하고 적당히 작성했다.</p>
+<p>메뉴쪽 개발에 대해서 인지했을 때는 부담이 상당히 컸는데, 정말 <code>electron</code>이 너무 잘 해놔서 아주 손쉽게 구성이 가능했다. 사랑받는 프레임웍은 뭐가 달라도 다르구나.ㅋ</p>
+<p>템플릿 형태로 내용만 바꿔서 구성이 가능하다. <code>role</code>을 미리 정의해놔서 되돌리기, 복사하기 등의 기능도 손쉽게 추가 할 수 있다. 내가 요즘 고민하고 있는 일이랑 비슷하구나.ㅎ</p>
+<pre class="prettyprint taggerscript"><code>const template = [
+    {
+        label: 'File',
+        submenu: [
+            {
+                role: 'quit'
+            }
+        ]
+    },
+    {
+        label: 'Help',
+        submenu: [
+            {
+                label: 'User Guide',
+                click () {
+                    electron.shell.openExternal('https://github.com/msaltnet/T.Viewer/wiki/%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EB%B0%8F-%EC%82%AC%EC%9A%A9%EB%B2%95');
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Source Code',
+                click () {
+                    electron.shell.openExternal('https://github.com/msaltnet/T.Viewer');
+                }
+            },
+            {
+                label: 'OSS Notice',
+                click () {
+                    dialog.showMessageBox({
+                        type: "info",
+                        title: "OSS Notice",
+                        message: "Open Source Sorftware Notice",
+                        detail: "\nOSS Notice | T.Viewer\nCopyright (c) 2019, msalt.net Jeong Seongmoon\n\nThis application use Open Source Software (OSS). You can find the source code of these open source project, along with applicable license information, below. We are deeply grateful to these developers for their work and contributions.\n\nAce Editor\n  - https://github.com/ajaxorg/ace\n  - Copyright (c) 2010, Ajax.org B.V.\n  - BSD License\n\nVue\n  - https://github.com/vuejs/vue\n  - Copyright (c) 2013-present, Yuxi (Evan) You\n  - MIT License\n\nVuetify\n  - https://github.com/vuetifyjs/vuetify\n  - Copyright (c) 2016-2020 John Jeremy Leider\n  - MIT License\n\ncore-js\n  - https://github.com/zloirock/core-js\n  - Copyright (c) 2014-2020 Denis Pushkarev\n  - MIT License"
+                    });
+                }
+            },
+            {
+                label: 'About',
+                click () {
+                    dialog.showMessageBox({
+                        type: "info",
+                        title: "T.Viewer",
+                        message: "T.Viewer",
+                        detail: "Version: 1.0.0\nDate: 2020. 7. 31"
+                    });
+                }
+            }
+        ]
+    }
+];
+</code></pre>
+<p>템플릿을 작성한 다음 적용하는 코드를 두 줄 넣어 주면 메뉴 끝!</p>
+<pre class="prettyprint reasonml"><code>  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+</code></pre>
+<h2 id="사용-설명서-작성">사용 설명서 작성</h2>
+<p>항상 내가 꿈꾸는 프로그램은 설명서가 필요 없는 프로그램이다. 그렇게 만들려고 노력을 많이 하지만, 막상 사용자들에게 피드백을 받아보면 그것은 환상이라는 것을 알게된다. 잘잘못을 떠나서 누군가에게는 너무 당연한 것이, 누군가에게는 어처구니 없는 방법으로 받아드려 질 수 있다는 것을 알게되었기 때문이다. 그럼에도 불구하고, <strong>가장 많은 사람들이 시행착오 없이 사용할 수 있도록, 아주 대중적인 심성 모형, <a href="https://en.wikipedia.org/wiki/Mental_model">Mental Model</a>을 차용하려고 노력한다.</strong></p>
+<p>그런 노력으로 아이콘도 가능하면 이미 다른 프로그램에서 동일한 의미로 사용되고 있는 것과 같은 것을 사용했음에도, 줄바꿈이나 자동 스크롤은 직관적으로 이해가 어렵다는 의견도 있었다. 하지만, <strong>이런 경우도 큰 문제가 되지 않는 것이 한 번만 눌러보면 금방 이해할 수 있다. 바로 적용되고, 쉽게 설정/해제 할 수 있기에 그런 부분이 보완이 된다.</strong></p>
+<p>한 장짜리 가이드 이미지와 비디오 가이드를 작성하려 했으나, 비디오보다는 짤방이 나을것 같아서…ㅋ</p>
+<p><img src="/images/posts/313/002.gif" alt=""></p>
+<p>T.Viewer User Guide</p>
+<h2 id="code-signing">code signing</h2>
+<p>데탑 프로그램도 서명이 필요하다는 것은 알고 있었지만 이렇게 복잡하고, 비용이 많이 들어 갈 줄은 몰랐다. 정리를 잘해 놓은 글이 있어서 붙여 놓는다.</p>
+<p><a href="https://devnote.niceilm.net/electron-code-signing/">electron code signing</a></p>
+<p>돈도 돈이지만, 사업자 등록증도 있어야 하고, 시간도 오래걸리고 갱신도 생각해야 한다. 오픈소스 프로젝트를 위한 패키지도 있다고 하는데, 그것도 폴란드 인증소로부터 최초 USB동글을 받아야 해서 시간이나 비용이 상당이 걸린다.</p>
+<p>어쩔 수 없이, 사용 설명서와 별개로 설치 설명서를 만들게 되었다.ㅠ 설명서 싫어.</p>
+<h2 id="마치며">마치며</h2>
+<p>뭐 대단한 것 하나 한 것이 없지만, 막상 이것 저것 신경을 써야 하는 것이 쉽지만은 않았다. 그래도 프로젝트 셋업부터 릴리즈까지 모든 과정을 직접 경험해 볼 수 있어서 좋았다. 설치할 때 경고 없애려 인증서도 알아보는 것도 무척 귀찮은 일이었다. 쉬울 것만 같았던 일도 막상 직접해보면 손이 많이 간다는 사실을 다시 확인했다. 이 후의 계획은 어떻게 될지 모르겠지만, 어째든 그런대로 일단락하게 되어서 속이 시원하다.ㅋ</p>
+</div><nav class="entry-nav" data-astro-cid-ssdmjifj><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-ssdmjifj>← 나의 경험담의 다른 글</a><a href="/" data-astro-cid-ssdmjifj>처음으로 ↑</a></nav></article></div><aside class="sidebar" aria-label="블로그 메뉴" data-astro-cid-wv7whodv><figure class="blog-image" data-astro-cid-wv7whodv><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" data-astro-cid-wv7whodv></figure><section class="intro" data-astro-cid-wv7whodv><p class="intro-copy" data-astro-cid-wv7whodv>그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p><blockquote class="poem" data-astro-cid-wv7whodv><p data-astro-cid-wv7whodv>종은 누가 그걸 울리기 전에는<br data-astro-cid-wv7whodv>종이 아니다.</p><p data-astro-cid-wv7whodv>노래는 누가 그러 부르기 전에는<br data-astro-cid-wv7whodv>노래가 아니다.</p><p data-astro-cid-wv7whodv>당신의 마음속에 있는 사랑도<br data-astro-cid-wv7whodv>한쪽으로 치워 놓아선 안된다.</p><p data-astro-cid-wv7whodv>사랑은 주기 전에는 사랑이 아니니까.</p><cite data-astro-cid-wv7whodv>— 오스카 햄머스타인</cite></blockquote></section><section class="categories" data-astro-cid-wv7whodv><h2 data-astro-cid-wv7whodv>카테고리</h2><ul data-astro-cid-wv7whodv><li data-astro-cid-wv7whodv><a href="/category/About%20Blog" data-astro-cid-wv7whodv>About Blog<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-wv7whodv>사람생각<span data-astro-cid-wv7whodv>32</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-wv7whodv>초록이들<span data-astro-cid-wv7whodv>12</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-wv7whodv>나의 경험담<span data-astro-cid-wv7whodv>52</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-wv7whodv>감상문<span data-astro-cid-wv7whodv>78</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-wv7whodv>만들기<span data-astro-cid-wv7whodv>21</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-wv7whodv>육아와 가사<span data-astro-cid-wv7whodv>10</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-wv7whodv>이달의 노래<span data-astro-cid-wv7whodv>20</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-wv7whodv>좋은 씨앗<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-wv7whodv>기술 이야기<span data-astro-cid-wv7whodv>49</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-wv7whodv>타이젠 Tizen<span data-astro-cid-wv7whodv>18</span></a></li></ul></section><a class="side-link" href="/rss" data-astro-cid-wv7whodv>RSS 구독 <span aria-hidden="true" data-astro-cid-wv7whodv>↗</span></a></aside></main><footer data-astro-cid-jo6i4kqk><div data-astro-cid-jo6i4kqk><a href="/" data-astro-cid-jo6i4kqk>고마워서 만든 블로그 by 맛소금</a><span data-astro-cid-jo6i4kqk>© 2026 맛소금</span></div></footer></body></html>

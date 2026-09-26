@@ -1,5 +1,23 @@
 ---
-const { title, subtitle = '' } = Astro.props;
+const { title, subtitle = '', eyebrow = '', isPost = false } = Astro.props;
 ---
-<div class="title-banner"><div><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div></div>
-<style>.title-banner{background:#00d47c;min-height:190px;display:flex;align-items:center}.title-banner>div{width:min(1180px,calc(100% - 40px));margin:auto}.title-banner h1{font-family:Georgia,"Noto Serif KR",serif;font-size:36px;font-weight:500;margin:0}.title-banner p{margin:12px 0 0;font-size:14px;color:#174a35}@media(max-width:600px){.title-banner{min-height:140px}.title-banner h1{font-size:28px}}</style>
+<section class:list={['title-banner', { 'post-banner': isPost }]} aria-label={eyebrow || title}>
+  <div class="banner-inner">
+    {eyebrow && (eyebrow === '검색' || eyebrow === '태그 검색'
+      ? <span class="eyebrow">{eyebrow}</span>
+      : <a class="eyebrow" href={`/category/${encodeURIComponent(eyebrow)}`}>{eyebrow}</a>)}
+    <h1>{title}</h1>
+    {subtitle && <p>{subtitle}</p>}
+  </div>
+</section>
+<style>
+  .title-banner{height:202px;background:#35a057;color:#fff;display:flex}
+  .banner-inner{width:min(1180px,calc(100% - 60px));height:100%;margin:auto;position:relative;display:flex;align-items:center;justify-content:center}
+  .title-banner h1{font-family:"Nanum Myeongjo","Nanum Gothic",serif;font-size:30px;line-height:1.8;font-weight:500;text-align:center;margin:0;max-width:90%;text-shadow:0 1px 1px #1c6a3d30}
+  .eyebrow{position:absolute;top:24px;left:0;font-size:15px;color:#e7f1e9;text-decoration:underline;text-underline-offset:3px}
+  .title-banner p{position:absolute;right:0;bottom:24px;margin:0;font-size:13px;color:#e7f1e9}
+  .post-banner .eyebrow{position:absolute;top:25px;left:0;margin:0;font:400 18px/1.4286 Raleway,"Malgun Gothic",Tahoma,sans-serif;color:#fff;opacity:.7;text-decoration:underline;text-underline-offset:3px}
+  .post-banner h1{font-size:35px;line-height:50px;font-weight:400;margin:15px 0;text-shadow:none}
+  .post-banner p{position:absolute;right:0;bottom:30px;margin:0;font:400 16px/1.4286 Raleway,"Malgun Gothic",Tahoma,sans-serif;color:#fff;opacity:.7}
+  @media(max-width:600px){.title-banner{height:170px}.banner-inner{width:calc(100% - 36px)}.title-banner h1{font-size:27px;max-width:100%}.eyebrow{top:20px;font-size:13px}.title-banner p{bottom:18px;font-size:12px}}
+</style>

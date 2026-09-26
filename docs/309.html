@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"[T.Viewer 개발일기] 10. regex 정규식 검색","datePublished":"2020-07-30T13:37:36.000Z","description":"Android logcat이나 VS Code의 검색창을 보면 Regex 체크박스가 있다. 우리도 지원해 줘야 할 것 같아서, 지난번에 체크 박스는 넣어놨는데. 로직은 어떻게 하지? 아, VS Code랑 똑같이 하믄 되겠다! 흐흐 오픈소스 묻어가기. VS Code의 로직 엿보기 유명한 오픈소스 프로젝트 답게 소스 정리가 아주 잘 되어 있다. 쉽게 찾을 수 있었다. FindModelBoundToEditorModel class 에서, private research 메소드가 호출될 때 _findMatches에서 editor 인테페이스의 findMatches 메소드를 호출 함으로써 매치되는 Range Array를 리턴받는다. /** * Search the model. * @param searchString The..","mainEntityOfPage":"https://blog.msalt.net/309","image":"https://blog.msalt.net/images/posts/309/002.png"}</script><title>[T.Viewer 개발일기] 10. regex 정규식 검색 | 맛소금</title><meta name="description" content="Android logcat이나 VS Code의 검색창을 보면 Regex 체크박스가 있다. 우리도 지원해 줘야 할 것 같아서, 지난번에 체크 박스는 넣어놨는데. 로직은 어떻게 하지? 아, VS Code랑 똑같이 하믄 되겠다! 흐흐 오픈소스 묻어가기. VS Code의 로직 엿보기 유명한 오픈소스 프로젝트 답게 소스 정리가 아주 잘 되어 있다. 쉽게 찾을 수 있었다. FindModelBoundToEditorModel class 에서, private research 메소드가 호출될 때 _findMatches에서 editor 인테페이스의 findMatches 메소드를 호출 함으로써 매치되는 Range Array를 리턴받는다. /** * Search the model. * @param searchString The.."><link rel="canonical" href="https://blog.msalt.net/309"><meta property="og:type" content="article"><meta property="og:site_name" content="고마워서 만든 블로그 by 맛소금"><meta property="og:title" content="[T.Viewer 개발일기] 10. regex 정규식 검색 | 맛소금"><meta property="og:description" content="Android logcat이나 VS Code의 검색창을 보면 Regex 체크박스가 있다. 우리도 지원해 줘야 할 것 같아서, 지난번에 체크 박스는 넣어놨는데. 로직은 어떻게 하지? 아, VS Code랑 똑같이 하믄 되겠다! 흐흐 오픈소스 묻어가기. VS Code의 로직 엿보기 유명한 오픈소스 프로젝트 답게 소스 정리가 아주 잘 되어 있다. 쉽게 찾을 수 있었다. FindModelBoundToEditorModel class 에서, private research 메소드가 호출될 때 _findMatches에서 editor 인테페이스의 findMatches 메소드를 호출 함으로써 매치되는 Range Array를 리턴받는다. /** * Search the model. * @param searchString The.."><meta property="og:url" content="https://blog.msalt.net/309"><meta property="og:image" content="https://blog.msalt.net/images/posts/309/002.png"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/rss+xml" title="고마워서 만든 블로그 by 맛소금" href="/rss"><link rel="icon" href="/favicon.ico" sizes="any"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"고마워서 만든 블로그 by 맛소금","description":"개발, 책, 일상에 대한 기록","url":"https://blog.msalt.net"}</script><link rel="stylesheet" href="/_astro/TitleBanner.C9ln51x0.css"><style>.entry[data-astro-cid-ssdmjifj]{max-width:790px}.entry-content[data-astro-cid-ssdmjifj]{overflow-wrap:anywhere;font-family:Iropke Batang,Malgun Gothic,Tahoma,serif;font-size:18px;line-height:1.9}.entry-content[data-astro-cid-ssdmjifj] p{margin:0 0 20px}.entry-content[data-astro-cid-ssdmjifj] h2{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 22px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] h2[data-ke-size=size26]{font-size:29.16px;line-height:1.8}.entry-content[data-astro-cid-ssdmjifj] h3{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 18px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] img{max-height:none;margin:1.5em auto;display:block}.entry-content[data-astro-cid-ssdmjifj] blockquote{border-left:3px solid var(--green);color:#666;margin:1.4em 0;padding:4px 20px}.entry-content[data-astro-cid-ssdmjifj] pre{background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6;overflow:auto}.entry-content[data-astro-cid-ssdmjifj] code{font-family:Consolas,monospace}.entry-content[data-astro-cid-ssdmjifj] table{border-collapse:collapse;display:block;overflow-x:auto}.entry-content[data-astro-cid-ssdmjifj] th,.entry-content[data-astro-cid-ssdmjifj] td{border:1px solid #ddd;padding:8px 12px}.entry-content[data-astro-cid-ssdmjifj] iframe{max-width:100%}.entry-nav[data-astro-cid-ssdmjifj]{color:#666;border-top:1px solid #eee;justify-content:space-between;margin-top:50px;padding:22px 0;font-size:13px;display:flex}
+</style></head><body><header class="topbar" data-astro-cid-nen7h5rs><div class="topbar-inner" data-astro-cid-nen7h5rs><a class="brand" href="/" aria-label="고마워서 만든 블로그 by 맛소금" data-astro-cid-nen7h5rs><img src="/logo.png" alt="고마워서 만든 블로그 by 맛소금" width="151" height="32" data-astro-cid-nen7h5rs></a><div class="tools" data-astro-cid-nen7h5rs><details class="category-menu" data-astro-cid-nen7h5rs><summary data-astro-cid-nen7h5rs>분류 보기 <span aria-hidden="true" data-astro-cid-nen7h5rs>⌄</span></summary><nav class="category-panel" aria-label="카테고리" data-astro-cid-nen7h5rs><a href="/category/About%20Blog" data-astro-cid-nen7h5rs>About Blog</a><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-nen7h5rs>사람생각</a><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-nen7h5rs>초록이들</a><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-nen7h5rs>나의 경험담</a><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-nen7h5rs>감상문</a><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-nen7h5rs>만들기</a><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-nen7h5rs>육아와 가사</a><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-nen7h5rs>이달의 노래</a><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-nen7h5rs>좋은 씨앗</a><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-nen7h5rs>기술 이야기</a><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-nen7h5rs>타이젠 Tizen</a></nav></details><form class="search" action="/search" method="get" role="search" data-astro-cid-nen7h5rs><label class="sr-only" for="site-search" data-astro-cid-nen7h5rs>블로그 검색</label><input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" data-astro-cid-nen7h5rs><button type="submit" aria-label="검색" data-astro-cid-nen7h5rs><svg viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-nen7h5rs><circle cx="10.8" cy="10.8" r="6.4" data-astro-cid-nen7h5rs></circle><path d="m16 16 4.2 4.2" data-astro-cid-nen7h5rs></path></svg></button></form></div></div></header><section class="title-banner post-banner" aria-label="나의 경험담" data-astro-cid-hws4xp7b><div class="banner-inner" data-astro-cid-hws4xp7b><a class="eyebrow" href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-hws4xp7b>나의 경험담</a><h1 data-astro-cid-hws4xp7b>[T.Viewer 개발일기] 10. regex 정규식 검색</h1><p data-astro-cid-hws4xp7b>2020. 7. 30. 22:37</p></div></section><main class="site-main"><div class="main-column"><article class="entry" data-astro-cid-ssdmjifj><div class="entry-content" data-astro-cid-ssdmjifj><p>Android logcat이나 VS Code의 검색창을 보면 Regex 체크박스가 있다. 우리도 지원해 줘야 할 것 같아서, 지난번에 체크 박스는 넣어놨는데. 로직은 어떻게 하지? 아, VS Code랑 똑같이 하믄 되겠다! 흐흐 오픈소스 묻어가기.</p>
+<p><img src="/images/posts/309/002.png" alt=""></p>
+<p>VS Code에서 정규식 검색</p>
+<h2 id="vs-code의-로직-엿보기">VS Code의 로직 엿보기</h2>
+<p>유명한 오픈소스 프로젝트 답게 소스 정리가 아주 잘 되어 있다. 쉽게 찾을 수 있었다.</p>
+<p><code>FindModelBoundToEditorModel</code> class 에서, <code>private research</code> 메소드가 호출될 때 <code>_findMatches</code>에서 editor 인테페이스의 <code>findMatches</code> 메소드를 호출 함으로써 매치되는 Range Array를 리턴받는다.</p>
+<pre class="prettyprint groovy"><code>  /**
+    * Search the model.
+    * @param searchString The string used to search. If it is a regular expression, set `isRegex` to true.
+    * @param searchScope Limit the searching to only search inside this range.
+    * @param isRegex Used to indicate that `searchString` is a regular expression.
+    * @param matchCase Force the matching to match lower/upper case exactly.
+    * @param wordSeparators Force the matching to match entire words only. Pass null otherwise.
+    * @param captureMatches The result will contain the captured groups.
+    * @param limitResultCount Limit the number of results
+    * @return The ranges where the matches are. It is empty if no matches have been found.
+    */
+  findMatches(searchString: string, searchScope: IRange, isRegex: boolean, matchCase: boolean, wordSeparators: string | null, captureMatches: boolean, limitResultCount?: number): FindMatch[];
+</code></pre>
+<p>내가 필요한 것은 구현체의 로직인데, <code>textModel.ts</code>에서 찾을 수 있다. regex 일때, 로그 한 줄에 매치되는 단어가 있는지만 확인하면 되므로 범위를 더 좁힐 수 있다.</p>
+<pre class="prettyprint reasonml"><code>  public findMatches(searchString: string, rawSearchScope: any, isRegex: boolean, matchCase: boolean, wordSeparators: string | null, captureMatches: boolean, limitResultCount: number = LIMIT_FIND_COUNT): model.FindMatch[] {
+    this._assertNotDisposed();
+
+    let searchRange: Range;
+    if (Range.isIRange(rawSearchScope)) {
+      searchRange = this.validateRange(rawSearchScope);
+    } else {
+      searchRange = this.getFullModelRange();
+    }
+
+    if (!isRegex &amp;&amp; searchString.indexOf('\n') &lt; 0) {
+      // not regex, not multi line
+      const searchParams = new SearchParams(searchString, isRegex, matchCase, wordSeparators);
+      const searchData = searchParams.parseSearchRequest();
+
+      if (!searchData) {
+        return [];
+      }
+
+      return this.findMatchesLineByLine(searchRange, searchData, captureMatches, limitResultCount);
+    }
+
+    return TextModelSearch.findMatches(this, new SearchParams(searchString, isRegex, matchCase, wordSeparators), searchRange, captureMatches, limitResultCount);
+  }
+</code></pre>
+<p><code>textModelSearch.ts</code>의 <code>findMatches</code>가 나에게 필요한 부분인데, 검색 문자열의 전처리를 먼저 해야 한다. 할게 많구나.</p>
+<pre class="prettyprint reasonml"><code>  public static findMatches(model: TextModel, searchParams: SearchParams, searchRange: Range, captureMatches: boolean, limitResultCount: number): FindMatch[] {
+    const searchData = searchParams.parseSearchRequest();
+    if (!searchData) {
+      return [];
+    }
+
+    if (searchData.regex.multiline) {
+      return this._doFindMatchesMultiline(model, searchRange, new Searcher(searchData.wordSeparators, searchData.regex), captureMatches, limitResultCount);
+    }
+    return this._doFindMatchesLineByLine(model, searchRange, searchData, captureMatches, limitResultCount);
+  }
+</code></pre>
+<p><code>parseSearchRequest</code> 에서 전처리를 하는데, 각종 파라미터들과 함께 다시 <code>strings.createRegExp</code>를 통해 비교 정규식을 만들어 내는고 있었다.</p>
+<pre class="prettyprint kotlin"><code>  public parseSearchRequest(): SearchData | null {
+    if (this.searchString === '') {
+      return null;
+    }
+
+    // Try to create a RegExp out of the params
+    let multiline: boolean;
+    if (this.isRegex) {
+      multiline = isMultilineRegexSource(this.searchString);
+    } else {
+      multiline = (this.searchString.indexOf('\n') &gt;= 0);
+    }
+
+    let regex: RegExp | null = null;
+    try {
+      regex = strings.createRegExp(this.searchString, this.isRegex, {
+        matchCase: this.matchCase,
+        wholeWord: false,
+        multiline: multiline,
+        global: true,
+        unicode: true
+      });
+    } catch (err) {
+      return null;
+    }
+
+    if (!regex) {
+      return null;
+    }
+
+    let canUseSimpleSearch = (!this.isRegex &amp;&amp; !multiline);
+    if (canUseSimpleSearch &amp;&amp; this.searchString.toLowerCase() !== this.searchString.toUpperCase()) {
+      // casing might make a difference
+      canUseSimpleSearch = this.matchCase;
+    }
+
+    return new SearchData(regex, this.wordSeparators ? getMapForWordSeparators(this.wordSeparators) : null, canUseSimpleSearch ? this.searchString : null);
+  }
+</code></pre>
+<p><code>createRegExp</code>는 아래와 같고, <code>RegExp</code>를 생성해서 리턴한다.</p>
+<pre class="prettyprint typescript"><code>export function createRegExp(searchString: string, isRegex: boolean, options: RegExpOptions = {}): RegExp {
+  if (!searchString) {
+    throw new Error('Cannot create regex from empty string');
+  }
+  if (!isRegex) {
+    searchString = escapeRegExpCharacters(searchString);
+  }
+  if (options.wholeWord) {
+    if (!/\B/.test(searchString.charAt(0))) {
+      searchString = '\\b' + searchString;
+    }
+    if (!/\B/.test(searchString.charAt(searchString.length - 1))) {
+      searchString = searchString + '\\b';
+    }
+  }
+  let modifiers = '';
+  if (options.global) {
+    modifiers += 'g';
+  }
+  if (!options.matchCase) {
+    modifiers += 'i';
+  }
+  if (options.multiline) {
+    modifiers += 'm';
+  }
+  if (options.unicode) {
+    modifiers += 'u';
+  }
+
+  return new RegExp(searchString, modifiers);
+}
+</code></pre>
+<p>이제 다시 스택을 거슬러 올라가서, 생성된 정규식이 실질적으로 사용되는 <code>_doFindMatchesLineByLine</code>을 살펴보자. 주석까지 잘 달려있는데, 내가 필요한건 라인 한 줄에 대한 평가니까 <code>_findMatchesInLine</code>만 있으면 된다.</p>
+<pre class="prettyprint reasonml"><code>  private static _doFindMatchesLineByLine(model: TextModel, searchRange: Range, searchData: SearchData, captureMatches: boolean, limitResultCount: number): FindMatch[] {
+    const result: FindMatch[] = [];
+    let resultLen = 0;
+
+    // Early case for a search range that starts &amp; stops on the same line number
+    if (searchRange.startLineNumber === searchRange.endLineNumber) {
+      const text = model.getLineContent(searchRange.startLineNumber).substring(searchRange.startColumn - 1, searchRange.endColumn - 1);
+      resultLen = this._findMatchesInLine(searchData, text, searchRange.startLineNumber, searchRange.startColumn - 1, resultLen, result, captureMatches, limitResultCount);
+      return result;
+    }
+
+    // Collect results from first line
+    const text = model.getLineContent(searchRange.startLineNumber).substring(searchRange.startColumn - 1);
+    resultLen = this._findMatchesInLine(searchData, text, searchRange.startLineNumber, searchRange.startColumn - 1, resultLen, result, captureMatches, limitResultCount);
+
+    // Collect results from middle lines
+    for (let lineNumber = searchRange.startLineNumber + 1; lineNumber &lt; searchRange.endLineNumber &amp;&amp; resultLen &lt; limitResultCount; lineNumber++) {
+      resultLen = this._findMatchesInLine(searchData, model.getLineContent(lineNumber), lineNumber, 0, resultLen, result, captureMatches, limitResultCount);
+    }
+
+    // Collect results from last line
+    if (resultLen &lt; limitResultCount) {
+      const text = model.getLineContent(searchRange.endLineNumber).substring(0, searchRange.endColumn - 1);
+      resultLen = this._findMatchesInLine(searchData, text, searchRange.endLineNumber, 0, resultLen, result, captureMatches, limitResultCount);
+    }
+
+    return result;
+  }
+</code></pre>
+<p>이제 정규식이랑 매치되는 부분이 나올것 같은데도 안나오는뎈ㅋㅋ 이게 전체 editor에서 검색이라 로직이 훨씬 복잡하다. <code>Searcher</code>의 <code>next</code>메소드에서 정규식과 매치되는 부분을 찾고, <code>createFindMatch</code>을 통해서 매치되는 부분의 위치를 결과 값으로 정리하는 것으로 마무리가 된다.</p>
+<pre class="prettyprint reasonml"><code>	private static _findMatchesInLine(searchData: SearchData, text: string, lineNumber: number, deltaOffset: number, resultLen: number, result: FindMatch[], captureMatches: boolean, limitResultCount: number): number {
+		const wordSeparators = searchData.wordSeparators;
+		if (!captureMatches &amp;&amp; searchData.simpleSearch) {
+			const searchString = searchData.simpleSearch;
+			const searchStringLen = searchString.length;
+			const textLength = text.length;
+
+			let lastMatchIndex = -searchStringLen;
+			while ((lastMatchIndex = text.indexOf(searchString, lastMatchIndex + searchStringLen)) !== -1) {
+				if (!wordSeparators || isValidMatch(wordSeparators, text, textLength, lastMatchIndex, searchStringLen)) {
+					result[resultLen++] = new FindMatch(new Range(lineNumber, lastMatchIndex + 1 + deltaOffset, lineNumber, lastMatchIndex + 1 + searchStringLen + deltaOffset), null);
+					if (resultLen &gt;= limitResultCount) {
+						return resultLen;
+					}
+				}
+			}
+			return resultLen;
+		}
+
+		const searcher = new Searcher(searchData.wordSeparators, searchData.regex);
+		let m: RegExpExecArray | null;
+		// Reset regex to search from the beginning
+		searcher.reset(0);
+		do {
+			m = searcher.next(text);
+			if (m) {
+				result[resultLen++] = createFindMatch(new Range(lineNumber, m.index + 1 + deltaOffset, lineNumber, m.index + 1 + m[0].length + deltaOffset), m, captureMatches);
+				if (resultLen &gt;= limitResultCount) {
+					return resultLen;
+				}
+			}
+		} while (m);
+		return resultLen;
+	}
+</code></pre>
+<p>최종적으로 <code>RegExp</code>의 <code>exec</code> 메소드를 사용해서 매치되는 부분은 <code>next</code> 메소드 안에서 확인 할 수 있다.</p>
+<pre class="prettyprint kotlin"><code>  public next(text: string): RegExpExecArray | null {
+    const textLength = text.length;
+
+    let m: RegExpExecArray | null;
+    do {
+      if (this._prevMatchStartIndex + this._prevMatchLength === textLength) {
+        // Reached the end of the line
+        return null;
+      }
+
+      m = this._searchRegex.exec(text);
+      if (!m) {
+        return null;
+      }
+</code></pre>
+<h2 id="tviewer에-적용하기">T.Viewer에 적용하기</h2>
+<p>생각보다 되게 길게 VS Code의 코드를 설명했는데 간단하게 정리해보면, 필요한 것은 매우 간단하다.</p>
+<ol>
+<li>
+<p>전처리를 통해서 정규식을 확정한다.</p>
+</li>
+<li>
+<p>정규식으로 비교한다.</p>
+</li>
+</ol>
+<p>전처리라고 해서 대단한 것은 없고, <code>unicode</code> 설정만 추가해주면 된다.</p>
+<p>regex 체크박스 상태가 변경되었을 때, <code>RegExp</code> 인스턴트를 생성해 두고, 필터에서 바로 사용하도록 했다.</p>
+<pre class="prettyprint javascript"><code>    onChangeTagRegex: function () {
+      if (this.tagRegexSetting)
+        this.tagRegex = new RegExp(this.tagFilter, 'u');
+    },
+    onChangeMessageRegex: function () {
+      if (this.messageRegexSetting)
+        this.messageRegex = new RegExp(this.messageFilter, 'u');
+    },
+    filterMessage: function (line) {
+      if (this.messageFilter == '')
+        return true;
+
+      if (!this.messageRegexSetting)
+        return -1 != line.indexOf(this.messageFilter);
+
+      return this.messageRegex.test(line);
+    },
+</code></pre>
+<p>이런 로직이 제대로 동작하는지 확인할 때 단위 테스트가 정말 유용하다. 여러가지 상황별 테스트를 쉽고 빠르게 적용해 볼 수 있기 때문이다. 간단하게 정규식이 제대로 적용되는지 테스트를 작성해보았다.</p>
+<pre class="prettyprint reasonml"><code>    it('should filterTag return correct value when tagRegexSetting is true', () =&gt; {
+      const wrapper = mount(LogMonitor, {
+        localVue,
+        vuetify,
+      })
+      const msgTagBanana = "07-10 14:51:21.337+0900 V/Banana( 2617): heart-battery.c banana";
+      const msgTagBar = "07-10 14:51:21.337+0900 F/Bar( 2617): heart-battery.c orange";
+      const msgTagMangoBarSpace = "07-10 14:51:21.337+0900 F/MangoBar   ( 2617): heart-battery.c orange";
+      const vm = wrapper.vm;
+      vm.tagFilter = '^Ba';
+      vm.tagRegexSetting = true;
+      vm.onChangeTagRegex();
+      expect(vm.filterTag(msgTagBanana)).toEqual(true);
+      expect(vm.filterTag(msgTagBar)).toEqual(true);
+      expect(vm.filterTag(msgTagMangoBarSpace)).toEqual(false);
+
+      vm.tagFilter = '.*Bar';
+      vm.tagRegexSetting = true;
+      vm.onChangeTagRegex();
+      expect(vm.filterTag(msgTagBanana)).toEqual(false);
+      expect(vm.filterTag(msgTagBar)).toEqual(true);
+      expect(vm.filterTag(msgTagMangoBarSpace)).toEqual(true);
+
+      vm.tagFilter = 'Bar$';
+      vm.tagRegexSetting = true;
+      vm.onChangeTagRegex();
+      expect(vm.filterTag(msgTagBanana)).toEqual(false);
+      expect(vm.filterTag(msgTagBar)).toEqual(true);
+      expect(vm.filterTag(msgTagMangoBarSpace)).toEqual(true);
+    })
+</code></pre>
+<p>정작 적용된 코드는 몇 줄 안됨. 뭥미. VS Code 관광한 셈 치자.ㅋ</p>
+<h2 id="마치며">마치며…</h2>
+<p>정규식 적용은 생각보다 어렵지 않았다. VS Code의 소스를 보면서 좋은 소스 코드의 구조에 대해서 한 번 더 생각해 볼 수 있어서 좋았다.</p>
+<p><a href="https://github.com/msaltnet/T.Viewer/commit/2017447ea562d6f7092b48ab3c84cb1979cde68a">msaltnet/T.Viewer - Apply regular expression feature</a> <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/RegExp">RegExp-MDN</a></p>
+</div><nav class="entry-nav" data-astro-cid-ssdmjifj><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-ssdmjifj>← 나의 경험담의 다른 글</a><a href="/" data-astro-cid-ssdmjifj>처음으로 ↑</a></nav></article></div><aside class="sidebar" aria-label="블로그 메뉴" data-astro-cid-wv7whodv><figure class="blog-image" data-astro-cid-wv7whodv><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" data-astro-cid-wv7whodv></figure><section class="intro" data-astro-cid-wv7whodv><p class="intro-copy" data-astro-cid-wv7whodv>그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p><blockquote class="poem" data-astro-cid-wv7whodv><p data-astro-cid-wv7whodv>종은 누가 그걸 울리기 전에는<br data-astro-cid-wv7whodv>종이 아니다.</p><p data-astro-cid-wv7whodv>노래는 누가 그러 부르기 전에는<br data-astro-cid-wv7whodv>노래가 아니다.</p><p data-astro-cid-wv7whodv>당신의 마음속에 있는 사랑도<br data-astro-cid-wv7whodv>한쪽으로 치워 놓아선 안된다.</p><p data-astro-cid-wv7whodv>사랑은 주기 전에는 사랑이 아니니까.</p><cite data-astro-cid-wv7whodv>— 오스카 햄머스타인</cite></blockquote></section><section class="categories" data-astro-cid-wv7whodv><h2 data-astro-cid-wv7whodv>카테고리</h2><ul data-astro-cid-wv7whodv><li data-astro-cid-wv7whodv><a href="/category/About%20Blog" data-astro-cid-wv7whodv>About Blog<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-wv7whodv>사람생각<span data-astro-cid-wv7whodv>32</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-wv7whodv>초록이들<span data-astro-cid-wv7whodv>12</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-wv7whodv>나의 경험담<span data-astro-cid-wv7whodv>52</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-wv7whodv>감상문<span data-astro-cid-wv7whodv>78</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-wv7whodv>만들기<span data-astro-cid-wv7whodv>21</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-wv7whodv>육아와 가사<span data-astro-cid-wv7whodv>10</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-wv7whodv>이달의 노래<span data-astro-cid-wv7whodv>20</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-wv7whodv>좋은 씨앗<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-wv7whodv>기술 이야기<span data-astro-cid-wv7whodv>49</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-wv7whodv>타이젠 Tizen<span data-astro-cid-wv7whodv>18</span></a></li></ul></section><a class="side-link" href="/rss" data-astro-cid-wv7whodv>RSS 구독 <span aria-hidden="true" data-astro-cid-wv7whodv>↗</span></a></aside></main><footer data-astro-cid-jo6i4kqk><div data-astro-cid-jo6i4kqk><a href="/" data-astro-cid-jo6i4kqk>고마워서 만든 블로그 by 맛소금</a><span data-astro-cid-jo6i4kqk>© 2026 맛소금</span></div></footer></body></html>

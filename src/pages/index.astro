@@ -1,16 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import TitleBanner from '../components/TitleBanner.astro';
-import PostCard from '../components/PostCard.astro';
+import PostLayout from '../layouts/PostLayout.astro';
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort((a,b) => b.data.date.valueOf() - a.data.date.valueOf());
-const pages = Math.ceil(posts.length / 20);
+const latest = posts[0];
 ---
-<BaseLayout>
-  <TitleBanner slot="banner" title="고마워서 만든 블로그 by 맛소금" subtitle="개발과 책, 살아가는 이야기" />
-  <section class="listing"><h1>최근 글</h1>{posts.map((post) => <div data-pageable><PostCard post={post} /></div>)}
-    <nav class="pagination" aria-label="페이지 이동"><a data-page-link="first" href="/">처음</a><a data-page-link="prev" href="/">← 이전</a><span data-page-label>1 / {pages}</span><a data-page-link="next" href="/?page=2">다음 →</a><a data-page-link="last" href={`/?page=${pages}`}>마지막</a></nav>
-  </section>
-</BaseLayout>
-<script>import '../scripts/pagination';</script>
-<style>.listing>h1{font-size:17px;font-weight:500;padding-bottom:15px;border-bottom:2px solid #222;margin:0}.pagination{display:flex;justify-content:center;align-items:center;gap:26px;padding:28px 0;color:#777;font-size:13px}</style>
+{latest && <PostLayout post={latest} isHome />}

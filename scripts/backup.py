@@ -9,7 +9,6 @@ import html
 import json
 import re
 import time
-import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass
 from html.parser import HTMLParser
@@ -29,7 +28,6 @@ class AssetParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.images: list[dict[str, str]] = []
-        self.comments: list[dict[str, str]] = []
         self._current_image: dict[str, str] | None = None
         self._capture_caption = False
         self._caption: list[str] = []
@@ -65,57 +63,6 @@ class AssetParser(HTMLParser):
             self._current_image = None
 
 
-class CommentParser(HTMLParser):
-    """Extract visible comment records while retaining original comment HTML too."""
-
-    def __init__(self, post_id: str) -> None:
-        super().__init__(convert_charrefs=True)
-        self.post_id = post_id
-        self.comments: list[dict[str, str]] = []
-        self.stack: list[dict[str, str]] = []
-        self.capture: str | None = None
-        self.capture_depth = 0
-        self.capture_text: list[str] = []
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        values = {key.lower(): value or "" for key, value in attrs}
-        if tag.lower() == "li" and values.get("id", "").startswith("comment"):
-            comment_id = values["id"][len("comment"):]
-            parent_id = self.stack[-1]["id"] if self.stack else ""
-            record = {"post_id": self.post_id, "id": comment_id, "parent_id": parent_id, "author": "", "date": "", "text": ""}
-            self.comments.append(record)
-            self.stack.append(record)
-        if self.stack and tag.lower() == "span" and values.get("class") in {"name", "date"}:
-            self.capture = values["class"]
-            self.capture_depth = 1
-            self.capture_text = []
-        elif self.stack and tag.lower() == "p" and self.capture is None:
-            self.capture = "text"
-            self.capture_depth = 1
-            self.capture_text = []
-        elif self.capture:
-            self.capture_depth += 1
-
-    def handle_data(self, data: str) -> None:
-        if self.capture:
-            self.capture_text.append(data)
-
-    def handle_endtag(self, tag: str) -> None:
-        if self.capture:
-            self.capture_depth -= 1
-            if self.capture_depth == 0:
-                value = " ".join(" ".join(self.capture_text).split())
-                if self.capture == "date":
-                    value = value.removesuffix(" 신고").strip()
-                if self.stack and value:
-                    field = "author" if self.capture == "name" else "date" if self.capture == "date" else "text"
-                    self.stack[-1][field] = value
-                self.capture = None
-                self.capture_text = []
-        if tag.lower() == "li" and self.stack:
-            self.stack.pop()
-
-
 @dataclass
 class BackupResult:
     id: str
@@ -124,12 +71,8 @@ class BackupResult:
     html_status: str
     image_count: int
     images_downloaded: int
-    comments_expected: int
-    comments_downloaded: int
-    comments_status: str
     errors: list[str]
     images: list[dict[str, str]]
-    comments: list[dict[str, str]]
 
 
 def fetch(url: str, timeout: float, limit: int) -> tuple[bytes, str]:
@@ -139,71 +82,6 @@ def fetch(url: str, timeout: float, limit: int) -> tuple[bytes, str]:
         if len(data) > limit:
             raise ValueError(f"response exceeds {limit} bytes")
         return data, response.headers.get("Content-Type", "")
-
-
-def multipart_form(fields: dict[str, str]) -> tuple[bytes, str]:
-    boundary = "----WebKitFormBoundary" + uuid.uuid4().hex
-    chunks: list[bytes] = []
-    for name, value in fields.items():
-        chunks.extend([
-            f"--{boundary}\r\n".encode(),
-            f'Content-Disposition: form-data; name="{name}"\r\n\r\n'.encode(),
-            value.encode("utf-8"),
-            b"\r\n",
-        ])
-    chunks.append(f"--{boundary}--\r\n".encode())
-    return b"".join(chunks), boundary
-
-
-def fetch_comment_page(post_url: str, post_id: str, timeout: float, timestamp: str = "") -> dict:
-    fields = {"id": post_id}
-    if timestamp:
-        fields["ts"] = timestamp
-    body, boundary = multipart_form(fields)
-    endpoint = urljoin(post_url, "/comment/view")
-    request = Request(endpoint, data=body, headers={
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/139 Safari/537.36",
-        "Content-Type": f"multipart/form-data; boundary={boundary}",
-        "Accept": "application/json, text/plain, */*",
-        "Origin": urlparse(post_url).scheme + "://" + urlparse(post_url).netloc,
-        "Referer": post_url,
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Dest": "empty",
-    }, method="POST")
-    with urlopen(request, timeout=timeout) as response:
-        data = json.loads(response.read().decode("utf-8", errors="replace"))
-    if "data" not in data or not isinstance(data["data"], dict):
-        raise ValueError("unexpected Tistory comment response")
-    return data["data"]
-
-
-def fetch_all_comments(post_url: str, post_id: str, timeout: float, delay: float) -> tuple[list[dict[str, str]], str]:
-    comments: list[dict[str, str]] = []
-    seen: set[str] = set()
-    timestamp = ""
-    raw_chunks: list[str] = []
-    for page_number in range(100):
-        if page_number and delay:
-            time.sleep(delay)
-        data = fetch_comment_page(post_url, post_id, timeout, timestamp)
-        comment_html = str(data.get("comment", ""))
-        raw_chunks.append(comment_html)
-        parser = CommentParser(post_id)
-        parser.feed(comment_html)
-        for record in parser.comments:
-            if record["id"] and record["id"] not in seen:
-                seen.add(record["id"])
-                comments.append(record)
-        if not data.get("isMoreComments"):
-            break
-        next_timestamp = str(data.get("ts", ""))
-        if not next_timestamp or next_timestamp == timestamp:
-            raise ValueError("comment pagination did not advance")
-        timestamp = next_timestamp
-    else:
-        raise ValueError("comment pagination exceeded 100 pages")
-    return comments, "".join(raw_chunks)
 
 
 def safe_extension(url: str, content_type: str) -> str:
@@ -230,7 +108,7 @@ def download_post(row: dict[str, str], root: Path, timeout: float, delay: float,
             html, _ = fetch(url, timeout, MAX_HTML_BYTES)
             html_path.write_bytes(html)
     except (HTTPError, URLError, TimeoutError, ValueError, OSError) as exc:
-        return BackupResult(post_id, url, str(html_path), "error", 0, 0, 0, 0, "unavailable", [f"HTML: {type(exc).__name__}: {exc}"], [], [])
+        return BackupResult(post_id, url, str(html_path), "error", 0, 0, [f"HTML: {type(exc).__name__}: {exc}"], [])
 
     parser = AssetParser()
     parser.feed(html.decode("utf-8", errors="replace"))
@@ -263,20 +141,7 @@ def download_post(row: dict[str, str], root: Path, timeout: float, delay: float,
             errors.append(f"Image {source_url}: {type(exc).__name__}: {exc}")
             image_map.append({**metadata, "source_url": source_url, "backup_path": "", "error": errors[-1]})
 
-    try:
-        comments, raw_comments = fetch_all_comments(url, post_id, timeout, delay)
-        comment_match = re.search(rf'id="commentCount{re.escape(post_id)}_0"[^>]*>(\d+)', html.decode("utf-8", errors="replace"), re.I)
-        comments_expected = int(comment_match.group(1)) if comment_match else len(comments)
-        comments_status = "ok" if comments_expected == len(comments) else f"count-mismatch:{comments_expected}!={len(comments)}"
-        comment_dir = root / "comments"
-        comment_dir.mkdir(parents=True, exist_ok=True)
-        (comment_dir / f"{post_id}.html").write_text(raw_comments, encoding="utf-8")
-    except (HTTPError, URLError, TimeoutError, ValueError, OSError, json.JSONDecodeError) as exc:
-        comments_expected = 0
-        comments = []
-        comments_status = f"error:{type(exc).__name__}"
-        errors.append(f"Comments: {type(exc).__name__}: {exc}")
-    return BackupResult(post_id, url, str(html_path), "ok", len(unique_images), downloaded, comments_expected, len(comments), comments_status, errors, image_map, comments)
+    return BackupResult(post_id, url, str(html_path), "ok", len(unique_images), downloaded, errors, image_map)
 
 
 def main() -> int:
@@ -314,8 +179,6 @@ def main() -> int:
     meta_dir = root / "metadata"
     meta_dir.mkdir(parents=True, exist_ok=True)
     (meta_dir / "posts.json").write_text(json.dumps([asdict(result) for result in results], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    comments = [comment for result in results for comment in result.comments]
-    (meta_dir / "comments.json").write_text(json.dumps(comments, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (meta_dir / "errors.json").write_text(json.dumps(error_rows, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     migration_dir = Path("migration")
     migration_dir.mkdir(parents=True, exist_ok=True)
@@ -324,14 +187,8 @@ def main() -> int:
         writer = csv.DictWriter(handle, fieldnames=image_columns, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(image_rows)
-    comment_columns = ["post_id", "id", "parent_id", "author", "date", "text"]
-    with (migration_dir / "comments.csv").open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=comment_columns, extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(comments)
     failed = sum(result.html_status != "ok" or bool(result.errors) for result in results)
-    mismatches = sum(result.comments_status.startswith("count-mismatch:") for result in results)
-    print(f"Posts: {len(results)}; comments: {len(comments)}; comment count mismatches: {mismatches}; download errors: {failed}; details: {meta_dir / 'errors.json'}")
+    print(f"Posts: {len(results)}; download errors: {failed}; details: {meta_dir / 'errors.json'}")
     return 1 if failed else 0
 
 

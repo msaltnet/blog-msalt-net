@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TitleBanner from '../components/TitleBanner.astro';
+---
+<BaseLayout title={`검색 결과 | 고마워서 만든 블로그 by 맛소금`}>
+  <TitleBanner slot="banner" title="검색 결과" eyebrow="검색" />
+  <section class="search-results" aria-live="polite" aria-busy="true">
+    <p class="query-label"></p>
+    <p class="status">검색 중...</p>
+    <ol class="results"></ol>
+  </section>
+</BaseLayout>
+<script>
+  const root = document.querySelector<HTMLElement>('.search-results');
+  const queryLabel = root?.querySelector<HTMLElement>('.query-label');
+  const status = root?.querySelector<HTMLElement>('.status');
+  const results = root?.querySelector<HTMLOListElement>('.results');
+
+  function plainText(markdown: string) {
+    return markdown
+      .replace(/^---[\s\S]*?---\s*/m, '')
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1 ')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/(```|~~~)[\s\S]*?\1/g, ' ')
+      .replace(/[`*_>#~|]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  const query = new URLSearchParams(location.search).get('q')?.trim() ?? '';
+  if (queryLabel) queryLabel.textContent = query ? `“${query}” 검색 결과` : '검색어를 입력해 주세요.';
+
+  if (query && status && results && root) {
+    fetch('/search-index.json')
+      .then((response) => {
+        if (!response.ok) throw new Error('검색 자료를 불러오지 못했습니다.');
+        return response.json();
+      })
+      .then((posts: Array<{ title: string; category: string; date: string; url: string; description: string; body: string }>) => {
+        const terms = query.normalize('NFKC').toLocaleLowerCase('ko-KR').split(/\s+/).filter(Boolean);
+        const matches = posts.map((post) => {
+          const searchable = `${post.title} ${post.category} ${post.description} ${plainText(post.body)}`
+            .normalize('NFKC').toLocaleLowerCase('ko-KR');
+          const title = post.title.normalize('NFKC').toLocaleLowerCase('ko-KR');
+          const description = post.description.normalize('NFKC').toLocaleLowerCase('ko-KR');
+          const score = terms.reduce((total, term) => total + (title.includes(term) ? 10 : description.includes(term) ? 3 : searchable.includes(term) ? 1 : 0), 0);
+          return { post, searchable, score };
+        }).filter(({ searchable }) => terms.every((term) => searchable.includes(term)))
+          .sort((a, b) => b.score - a.score || Date.parse(b.post.date) - Date.parse(a.post.date));
+        const totalMatches = matches.length;
+
+        root.setAttribute('aria-busy', 'false');
+        status.textContent = totalMatches ? `${totalMatches}건을 찾았습니다.${totalMatches > 50 ? ' 최신순 상위 50건을 표시합니다.' : ''}` : '검색 결과가 없습니다.';
+        for (const { post } of matches.slice(0, 50)) {
+          const item = document.createElement('li');
+          const link = document.createElement('a');
+          const meta = document.createElement('p');
+          const title = document.createElement('h2');
+          const excerpt = document.createElement('p');
+          const date = new Date(post.date);
+          link.href = post.url;
+          link.className = 'result-link';
+          title.textContent = post.title;
+          meta.className = 'result-meta';
+          meta.textContent = `${post.category} · ${new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeZone: 'Asia/Seoul' }).format(date)}`;
+          excerpt.className = 'result-excerpt';
+          excerpt.textContent = post.description || plainText(post.body).slice(0, 180);
+          link.append(meta, title, excerpt);
+          item.append(link);
+          results.append(item);
+        }
+      })
+      .catch(() => {
+        root.setAttribute('aria-busy', 'false');
+        status.textContent = '검색 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+      });
+  } else if (root) {
+    root.setAttribute('aria-busy', 'false');
+    status?.remove();
+  }
+</script>
+<style>
+  .search-results{min-height:260px}.query-label{font-size:15px;color:#555;margin:0 0 8px}.status{color:#888;font-size:14px;margin:18px 0}.results{padding:0;margin:0;list-style:none}.results li{border-top:1px solid #e9e9e9}.result-link{display:block;padding:20px 0}.result-meta{font-size:12px;color:#00a963;margin:0 0 7px}.result-link h2{font:500 22px/1.4 Georgia,"Noto Serif KR",serif;margin:0 0 7px}.result-excerpt{font-size:14px;line-height:1.7;color:#777;margin:0}
+</style>

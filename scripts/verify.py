@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check migration coverage, localized body images, and preserved comments."""
+"""Check migration coverage, localized body images, and generated routes."""
 
 from __future__ import annotations
 
@@ -44,12 +44,6 @@ def main() -> int:
                     errors.append(f"Missing local asset in post {post_id}: {url}")
             elif url.startswith(("http://", "https://")):
                 remote_images.append(f"{post_id}: {url}")
-
-    comment_files = list((ROOT / "src/data/comments").glob("*.json"))
-    comments = sum(len(json.loads(path.read_text(encoding="utf-8"))) for path in comment_files)
-    missing_comment_files = post_ids - {path.stem for path in comment_files}
-    if missing_comment_files:
-        errors.append(f"Missing comment data files: {len(missing_comment_files)}")
 
     conversion_path = ROOT / "migration/conversion-report.json"
     conversion = json.loads(conversion_path.read_text(encoding="utf-8")) if conversion_path.exists() else {}
@@ -101,7 +95,6 @@ def main() -> int:
     print(f"Inventory posts: {len(posts)}; categories: {len(categories)}")
     print(f"HTML backups: {len(backup_ids)}; Markdown posts: {len(markdown_ids)}")
     print(f"Localized image references: {len(localized_references)}; remote image references: {len(remote_images)}")
-    print(f"Comment files: {len(comment_files)}; exported comments: {comments}")
     if (ROOT / "dist").is_dir():
         print(f"Static output: {len(list((ROOT / 'dist').glob('*.html')))} root HTML pages; tag routes: {len(list((ROOT / 'dist/tag').glob('*.html')))}")
     if remote_images:

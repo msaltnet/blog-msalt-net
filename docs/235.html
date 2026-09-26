@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Angular에 Webpack 적용 후기 & Tip","datePublished":"2017-12-10T12:55:10.000Z","description":"Angular를 사용한 웹사이트를 만들었는데, 막상 Release 할 때 첫화면 로딩 성능이 잘 안나와서 급하게 Webpack을 적용해서 성능을 개선했던 기억을 간단하게나마 정리해본다. 기술적인 내용은 참고했던 사이트의 소개 위주로 간단하게 적고, 경험적인 내용을 추가로 정리해서 덧 붙인다. 우선 기술적인 내용! Webpack으로 AOT Compile and Bundling! 결론적으로! Webpack 적용해서 index.html 에는 bundled js 파일만 남겼다. 우선 AOT가 무엇인지 알아야 하는데, Angular는 2가지 compile 방법을 제공한다. 성능 개선이 목적이었기에 당연히 빠르다던 AOT를 적용했다. 1.Just-in-Time (JIT), which compiles your app..","mainEntityOfPage":"https://blog.msalt.net/235","image":"https://blog.msalt.net/images/posts/235/002.jpg"}</script><title>Angular에 Webpack 적용 후기 &amp; Tip | 맛소금</title><meta name="description" content="Angular를 사용한 웹사이트를 만들었는데, 막상 Release 할 때 첫화면 로딩 성능이 잘 안나와서 급하게 Webpack을 적용해서 성능을 개선했던 기억을 간단하게나마 정리해본다. 기술적인 내용은 참고했던 사이트의 소개 위주로 간단하게 적고, 경험적인 내용을 추가로 정리해서 덧 붙인다. 우선 기술적인 내용! Webpack으로 AOT Compile and Bundling! 결론적으로! Webpack 적용해서 index.html 에는 bundled js 파일만 남겼다. 우선 AOT가 무엇인지 알아야 하는데, Angular는 2가지 compile 방법을 제공한다. 성능 개선이 목적이었기에 당연히 빠르다던 AOT를 적용했다. 1.Just-in-Time (JIT), which compiles your app.."><link rel="canonical" href="https://blog.msalt.net/235"><meta property="og:type" content="article"><meta property="og:site_name" content="고마워서 만든 블로그 by 맛소금"><meta property="og:title" content="Angular에 Webpack 적용 후기 &amp; Tip | 맛소금"><meta property="og:description" content="Angular를 사용한 웹사이트를 만들었는데, 막상 Release 할 때 첫화면 로딩 성능이 잘 안나와서 급하게 Webpack을 적용해서 성능을 개선했던 기억을 간단하게나마 정리해본다. 기술적인 내용은 참고했던 사이트의 소개 위주로 간단하게 적고, 경험적인 내용을 추가로 정리해서 덧 붙인다. 우선 기술적인 내용! Webpack으로 AOT Compile and Bundling! 결론적으로! Webpack 적용해서 index.html 에는 bundled js 파일만 남겼다. 우선 AOT가 무엇인지 알아야 하는데, Angular는 2가지 compile 방법을 제공한다. 성능 개선이 목적이었기에 당연히 빠르다던 AOT를 적용했다. 1.Just-in-Time (JIT), which compiles your app.."><meta property="og:url" content="https://blog.msalt.net/235"><meta property="og:image" content="https://blog.msalt.net/images/posts/235/002.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/rss+xml" title="고마워서 만든 블로그 by 맛소금" href="/rss"><link rel="icon" href="/favicon.ico" sizes="any"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"고마워서 만든 블로그 by 맛소금","description":"개발, 책, 일상에 대한 기록","url":"https://blog.msalt.net"}</script><link rel="stylesheet" href="/_astro/TitleBanner.C9ln51x0.css"><style>.entry[data-astro-cid-ssdmjifj]{max-width:790px}.entry-content[data-astro-cid-ssdmjifj]{overflow-wrap:anywhere;font-family:Iropke Batang,Malgun Gothic,Tahoma,serif;font-size:18px;line-height:1.9}.entry-content[data-astro-cid-ssdmjifj] p{margin:0 0 20px}.entry-content[data-astro-cid-ssdmjifj] h2{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 22px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] h2[data-ke-size=size26]{font-size:29.16px;line-height:1.8}.entry-content[data-astro-cid-ssdmjifj] h3{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 18px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] img{max-height:none;margin:1.5em auto;display:block}.entry-content[data-astro-cid-ssdmjifj] blockquote{border-left:3px solid var(--green);color:#666;margin:1.4em 0;padding:4px 20px}.entry-content[data-astro-cid-ssdmjifj] pre{background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6;overflow:auto}.entry-content[data-astro-cid-ssdmjifj] code{font-family:Consolas,monospace}.entry-content[data-astro-cid-ssdmjifj] table{border-collapse:collapse;display:block;overflow-x:auto}.entry-content[data-astro-cid-ssdmjifj] th,.entry-content[data-astro-cid-ssdmjifj] td{border:1px solid #ddd;padding:8px 12px}.entry-content[data-astro-cid-ssdmjifj] iframe{max-width:100%}.entry-nav[data-astro-cid-ssdmjifj]{color:#666;border-top:1px solid #eee;justify-content:space-between;margin-top:50px;padding:22px 0;font-size:13px;display:flex}
+</style></head><body><header class="topbar" data-astro-cid-nen7h5rs><div class="topbar-inner" data-astro-cid-nen7h5rs><a class="brand" href="/" aria-label="고마워서 만든 블로그 by 맛소금" data-astro-cid-nen7h5rs><img src="/logo.png" alt="고마워서 만든 블로그 by 맛소금" width="151" height="32" data-astro-cid-nen7h5rs></a><div class="tools" data-astro-cid-nen7h5rs><details class="category-menu" data-astro-cid-nen7h5rs><summary data-astro-cid-nen7h5rs>분류 보기 <span aria-hidden="true" data-astro-cid-nen7h5rs>⌄</span></summary><nav class="category-panel" aria-label="카테고리" data-astro-cid-nen7h5rs><a href="/category/About%20Blog" data-astro-cid-nen7h5rs>About Blog</a><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-nen7h5rs>사람생각</a><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-nen7h5rs>초록이들</a><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-nen7h5rs>나의 경험담</a><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-nen7h5rs>감상문</a><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-nen7h5rs>만들기</a><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-nen7h5rs>육아와 가사</a><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-nen7h5rs>이달의 노래</a><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-nen7h5rs>좋은 씨앗</a><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-nen7h5rs>기술 이야기</a><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-nen7h5rs>타이젠 Tizen</a></nav></details><form class="search" action="/search" method="get" role="search" data-astro-cid-nen7h5rs><label class="sr-only" for="site-search" data-astro-cid-nen7h5rs>블로그 검색</label><input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" data-astro-cid-nen7h5rs><button type="submit" aria-label="검색" data-astro-cid-nen7h5rs><svg viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-nen7h5rs><circle cx="10.8" cy="10.8" r="6.4" data-astro-cid-nen7h5rs></circle><path d="m16 16 4.2 4.2" data-astro-cid-nen7h5rs></path></svg></button></form></div></div></header><section class="title-banner post-banner" aria-label="기술 이야기" data-astro-cid-hws4xp7b><div class="banner-inner" data-astro-cid-hws4xp7b><a class="eyebrow" href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-hws4xp7b>기술 이야기</a><h1 data-astro-cid-hws4xp7b>Angular에 Webpack 적용 후기 &amp; Tip</h1><p data-astro-cid-hws4xp7b>2017. 12. 10. 21:55</p></div></section><main class="site-main"><div class="main-column"><article class="entry" data-astro-cid-ssdmjifj><div class="entry-content" data-astro-cid-ssdmjifj><p>Angular를 사용한 웹사이트를 만들었는데, 막상 Release 할 때 <strong>첫화면 로딩 성능이 잘 안나와서 급하게 Webpack을 적용해서 성능을 개선했던 기억</strong>을 간단하게나마 정리해본다.</p>
+<p><img src="/images/posts/235/002.jpg" alt=""></p>
+<p>기술적인 내용은 참고했던 사이트의 소개 위주로 간단하게 적고, 경험적인 내용을 추가로 정리해서 덧 붙인다.</p>
+<h2 id="우선-기술적인-내용">우선 기술적인 내용!</h2>
+<h3 id="webpack으로-aot-compile-and-bundling">Webpack으로 AOT Compile and Bundling!</h3>
+<p><strong>결론적으로! Webpack 적용해서 index.html 에는 bundled js 파일만 남겼다.</strong></p>
+<p>우선 AOT가 무엇인지 알아야 하는데, Angular는 2가지 compile 방법을 제공한다. 성능 개선이 목적이었기에 당연히 <em><strong>빠르다던</strong></em> AOT를 적용했다.</p>
+<pre class="prettyprint"><code>1.Just-in-Time (JIT), which compiles your app in the browser at runtime
+2.Ahead-of-Time (AOT), which compiles your app at build time.
+</code></pre>
+<p>AOT 적용에는 2가지 문제가 있었는데, <strong>하나는 설정이 어렵다는 것이고, 다른 하나는 어렵게 설정을 성공해도 막상 눈에띄는 성능 개선을 느낄 수 없다는 것이다.</strong> 설정 방법에 대해서 언급하기가 어려운게, 방법이 계속 변경되어서ㅠ 이미 내가 사용했던 방법은 공식 사이트에서 자취를 감췄다.ㅠ</p>
+<p><a href="https://angular.io/guide/aot-compiler">The Ahead-of-Time (AOT) Compiler</a></p>
+<p>지금 나와있는 방법도 약간 덧없는 이유가 어차피 Webpack을 적용하면 webpack plugin을 통해서 컴파일한다. <strong>다시말해 성능 개선을 위한 작업으로 AOT를 적용할 거면, 그냥 첨부터 Webpack을 적용하는게 좋다.</strong></p>
+<p>Webpack을 적용해서 빌드하면 Webpack Plugin을 통해서 AOT 컴파일된 <code>js</code> 파일로 번들링이 되고, <code>index.html</code>에 기존에 JIT를 위해 존재했던 <code>systemjs</code> 관련 설정들 없이 번들링된 <code>js</code>파일만 로딩하면 된다.</p>
+<p>다양한 방법에 대해서 정리를 잘 해둔 글을 소개한다.</p>
+<p><a href="https://blog.craftlab.hu/multiple-solutions-for-angular-ahead-of-time-aot-compilation-c474d9a0d508">Multiple solutions for Angular Ahead of Time (AOT) Compilation</a></p>
+<h3 id="lazy-loading">Lazy Loading</h3>
+<p><strong><em>Lazy loading</em>을 적용해서 메뉴를 누를때 해당 Component의 js가 로딩도록 했다.</strong></p>
+<p>사실, 성능 개선을 위해서 <code>ngc</code>로 AOT를 하고, <code>rollup</code> 으로 번들링을 먼저 했었다. <em>Angular.io</em>의 가이드는 그것으로 충분할 것 같이 설명이 되어 있었기에, 차근 차근 가이드대로 설정했다. 하지만, 그것만으로는 안된다.ㅠ 첫화면 로딩 속도 개선을 위해서 <em><strong>Lazy Loading</strong></em>이 꼭 필요하다.</p>
+<p>잘 설명된 글이 있어서 소개하고 넘어가겠다. 예제도 github에 올려놔서, 정말 도움이 많이 되었다.ㅠ 공식 사이트보다 훨 낫다.</p>
+<p><a href="http://www.dzurico.com/angular-aot-webpack-lazy-loading/">Angular2 AOT with Webpack and Lazy Loading</a></p>
+<p><a href="https://toddmotto.com/lazy-loading-angular-code-splitting-webpack">Lazy loading: code splitting NgModules with Webpack</a></p>
+<p><a href="https://github.com/toddmotto/angular-lazy-load-demo">angular-lazy-load-demo(github)</a></p>
+<h3 id="common-module을-여러개의-chunk로-나누는-tip">Common module을 여러개의 Chunk로 나누는 Tip!</h3>
+<p><em>CommonsChunkPlugin</em> 을 사용해서 Bundling 된 Output js 파일을 Chunk로 쪼개야 로딩 속도를 좀 더 높일 수 있다. 근데, 가이드 대로만 하면 여전히 Common module에 대한 Bundled js file이 상당히 큰 사이즈를 갖는다. 그래서 더 나눌 수 없는지…이것 저것 해봤는데, 허허…된다! <em>CommonsChunkPlugin</em>을 여러개 사용해봤다.</p>
+<blockquote>
+<p>여러개의 CommonsChunkPlugin을 다른 방식으로 사용해보자!</p>
+</blockquote>
+<p><em>CommonsChunkPlugin</em>공식사이트에도 여러개 사용하는 방법에 대해서 나와있지만, 그것은 Entry도 여러개인 경우다. 나는 Entry가 하나인 상황에서 여러 설정을 적용해 봤다.</p>
+<h4 id="commonschunkplugin-하나만-사용-했을때">CommonsChunkPlugin 하나만 사용 했을때</h4>
+<p>아래와 같이 설정하였고,</p>
+<pre class="prettyprint"><code>//webpack.config.js
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'vendor',
+    minChunks: function(module){
+        return module.context &amp;&amp; /node_modules/.test(module.context );
+    }
+}),
+new ngToolsWebpack.AotPlugin({
+    tsConfigPath: './tsconfig.webpack.json'
+}),
+</code></pre>
+<p>아래와 같은 결과가 나왔다.</p>
+<pre class="prettyprint"><code>Version: webpack 3.10.0
+Time: 13070ms
+Asset           Size      Chunks                  Chunk Names
+app.0-chunk.js   169 kB       0  [emitted]
+app.1-chunk.js   112 kB       1  [emitted]
+app.2-chunk.js  82.8 kB       2  [emitted]
+app.3-chunk.js  8.07 kB       3  [emitted]
+app.4-chunk.js  3.51 kB       4  [emitted]
+app.main.js       54 kB       5  [emitted]         main
+app.vendor.js    529 kB       6  [emitted]  [big]  vendor
+</code></pre>
+<p><code>app.vendor.js</code> 가 <code>529 kB</code> 사이즈로 매우 크다.</p>
+<h4 id="commonschunkplugin-여러개-사용-했을때">CommonsChunkPlugin 여러개 사용 했을때</h4>
+<p>common chunk를 나누기 위해서 아래와 같이 설정하였고,</p>
+<pre class="prettyprint"><code>//webpack.config.js
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'vendor',
+    minChunks: function(module){
+        return module.context &amp;&amp; /node_modules/.test(module.context );
+    }
+}),
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'rxjs',
+    minChunks: function(module){
+        return (module.context &amp;&amp; (/node_modules\/rxjs/.test(module.context) || /@angular/.test(module.context)));
+    }
+}),
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'angular',
+    minChunks: function(module){
+        return module.context &amp;&amp; /@angular/.test(module.context);
+    }
+}),
+new webpack.optimize.CommonsChunkPlugin({
+    name: 'angular.core',
+    minChunks: function(module){
+        return module.context &amp;&amp; (/@angular\/core/.test(module.context) || /@angular\/common/.test(module.context));
+    }
+}),
+new ngToolsWebpack.AotPlugin({
+    tsConfigPath: './tsconfig.webpack.json'
+}),
+</code></pre>
+<p>아래와 같은 결과가 나왔다.</p>
+<pre class="prettyprint"><code>Hash: 1774b1f29d33e5e906d8
+Version: webpack 3.10.0
+Time: 13422ms
+    Asset                 Size       Chunks           Chunk Names
+    app.0-chunk.js        169 kB        0  [emitted]
+    app.1-chunk.js        112 kB        1  [emitted]
+    app.2-chunk.js        82.8 kB       2  [emitted]
+    app.3-chunk.js        8.07 kB       3  [emitted]
+    app.4-chunk.js        3.51 kB       4  [emitted]
+    app.rxjs.js           195 kB        5  [emitted]  rxjs
+    app.main.js           54 kB         6  [emitted]  main
+    app.vendor.js         35.8 kB       7  [emitted]  vendor
+    app.angular.js        134 kB        8  [emitted]  angular
+    app.angular.core.js   164 kB        9  [emitted]  angular.core
+</code></pre>
+<p><code>app.vendor.js</code> 를 <code>app.rxjs.js</code>, <code>app.angular.js</code>, <code>app.angular.core.js</code> 로 더 나눠서 로딩속도를 개선했다.</p>
+<p>기술적인것은 간단하게만 적으려고 했는데, 후…길어졌네. 지금은 또 상황이 달라졌을 수도 있는데, 다양한 plugin이나 라이브러리, 프레임웤등을 적절히 사용해서 최고의 결과를 도출하는 것이 중요하다! 지금 적용된 것도 여러가지 Webpack Plugin을 스파이킹하보고 그 중 하나를 선택한 것이다.</p>
+<h2 id="그것을-적용하기까지-이야기">그것을 적용하기까지 이야기</h2>
+<h3 id="다양한-솔루션은-축복이자-고통이다">다양한 솔루션은 축복이자 고통이다.</h3>
+<p>처음 이 문제를 접했을때 큰 걱정이 없었다. Angular 2가 이미 충분히 많이 사용하고 있는 프레임워크니까 당연히 이정도 솔루션은 있을 줄 알았다. 근데, 문제는 솔루션이 너무 많다는 것이다.ㅠ 심지어 공식 사이트 조차도 이렇게 할 수도 있고, 이렇게 해도 된다는 식으로 가이드가 되어 있었다. (번들링을 위해 rollup이나 webpack을 사용할 수 있다고…결국 둘다 해보고 결정ㅠ)</p>
+<p>여러가지가 있는 것은 좋은데, 어떤 것이 좋은지, 지금 우리 상황에 어떤것을 적용할 수 있을지 명확하지가 않아서 힘들었다. <strong>아픈만큼 성숙한다고 했던가. 엄청 고생했고, 그 과정에서 이래 저래 많은 것을 알게되었다.</strong></p>
+<h3 id="agile도-처음에-끝까지-고민해보자">Agile도 처음에 끝까지 고민해보자.</h3>
+<p>난 Agile을 무척 좋아하는데, 어쩌다보니 Agile이 눈앞에 것만, 단기 목표에만 집중하는 것처럼 진행 된 부분이 있다. <strong>반복적으로, 점진적인 개선을 이뤄나가는 방식에는 동의하지만 그렇다고해서 나중 일은 나중에 생각하자는 것은 정말 경계해야 할 일이다.</strong></p>
+<p>개발 환경을 꾸릴때 최종 Deployment까지 준비해야 하며, 각 단계의 리스크 관리가 필요하다.</p>
+<blockquote>
+<p>Agile에도 Architect이 필요하고, 설계과정이 충분히 필요하다.</p>
+</blockquote>
+<h3 id="새삼-다시-또-고맙다">새삼 다시 또 고맙다.</h3>
+<p>정리를 잘 해주신 블로거들에게 감사하고 또 감사드린다. angular.io를 엄청 신뢰하고 있었는데, 큰 도움이 못 되었다. 오히려, 블로거들의 글이 없었더라면 목표를 달성 할 수 없었을 것이다. 여러 가지 솔루션의 비교와 고민, 그리고 주의할 점과 예제까지! 매번 고마움을 느끼고, 그 마음으로 나도 이렇게 글을 남긴다.</p>
+<p>누군가에게 도움이 되길 바라며…</p>
+</div><nav class="entry-nav" data-astro-cid-ssdmjifj><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-ssdmjifj>← 기술 이야기의 다른 글</a><a href="/" data-astro-cid-ssdmjifj>처음으로 ↑</a></nav></article></div><aside class="sidebar" aria-label="블로그 메뉴" data-astro-cid-wv7whodv><figure class="blog-image" data-astro-cid-wv7whodv><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" data-astro-cid-wv7whodv></figure><section class="intro" data-astro-cid-wv7whodv><p class="intro-copy" data-astro-cid-wv7whodv>그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p><blockquote class="poem" data-astro-cid-wv7whodv><p data-astro-cid-wv7whodv>종은 누가 그걸 울리기 전에는<br data-astro-cid-wv7whodv>종이 아니다.</p><p data-astro-cid-wv7whodv>노래는 누가 그러 부르기 전에는<br data-astro-cid-wv7whodv>노래가 아니다.</p><p data-astro-cid-wv7whodv>당신의 마음속에 있는 사랑도<br data-astro-cid-wv7whodv>한쪽으로 치워 놓아선 안된다.</p><p data-astro-cid-wv7whodv>사랑은 주기 전에는 사랑이 아니니까.</p><cite data-astro-cid-wv7whodv>— 오스카 햄머스타인</cite></blockquote></section><section class="categories" data-astro-cid-wv7whodv><h2 data-astro-cid-wv7whodv>카테고리</h2><ul data-astro-cid-wv7whodv><li data-astro-cid-wv7whodv><a href="/category/About%20Blog" data-astro-cid-wv7whodv>About Blog<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-wv7whodv>사람생각<span data-astro-cid-wv7whodv>32</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-wv7whodv>초록이들<span data-astro-cid-wv7whodv>12</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-wv7whodv>나의 경험담<span data-astro-cid-wv7whodv>52</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-wv7whodv>감상문<span data-astro-cid-wv7whodv>78</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-wv7whodv>만들기<span data-astro-cid-wv7whodv>21</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-wv7whodv>육아와 가사<span data-astro-cid-wv7whodv>10</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-wv7whodv>이달의 노래<span data-astro-cid-wv7whodv>20</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-wv7whodv>좋은 씨앗<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-wv7whodv>기술 이야기<span data-astro-cid-wv7whodv>49</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-wv7whodv>타이젠 Tizen<span data-astro-cid-wv7whodv>18</span></a></li></ul></section><a class="side-link" href="/rss" data-astro-cid-wv7whodv>RSS 구독 <span aria-hidden="true" data-astro-cid-wv7whodv>↗</span></a></aside></main><footer data-astro-cid-jo6i4kqk><div data-astro-cid-jo6i4kqk><a href="/" data-astro-cid-jo6i4kqk>고마워서 만든 블로그 by 맛소금</a><span data-astro-cid-jo6i4kqk>© 2026 맛소금</span></div></footer></body></html>

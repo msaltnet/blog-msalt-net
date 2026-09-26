@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"BLE iBeacon Eddystone packet format 분석","datePublished":"2018-03-31T03:30:14.000Z","description":"지난번에 BLE Advertise Packet 내용 자세히 알아보기에서 BLE Avertise Packet이 어떻게 구성되는지 확인했다. 그 내용은 BLE Spec에 따른 원론적인 내용이었고, 그 Spec을 지키면서 새로운 기술을 정의한 것이 Apple에서 만든 iBeacon과 Google에서 만든 Eddystone이다. 두 기술 모두 BLE Advertise Packe의 최대 31Byte의 AdvData를 이용하여, 목적에 맞게 세부 데이터 구조를 정의한 것 뿐이다. iBeacon iBeacon은 2013년 애플에서 만들었고, 애플의 등록상표이다! 아래 그림과 같이 구성되며, 31Byte는 앞서 설명한대로 BLE Advertise Packet의 AdvData에 담겨지는 데이터이다. 별거 없다. 아주 단..","mainEntityOfPage":"https://blog.msalt.net/247","image":"https://blog.msalt.net/images/posts/247/002.jpg"}</script><title>BLE iBeacon Eddystone packet format 분석 | 맛소금</title><meta name="description" content="지난번에 BLE Advertise Packet 내용 자세히 알아보기에서 BLE Avertise Packet이 어떻게 구성되는지 확인했다. 그 내용은 BLE Spec에 따른 원론적인 내용이었고, 그 Spec을 지키면서 새로운 기술을 정의한 것이 Apple에서 만든 iBeacon과 Google에서 만든 Eddystone이다. 두 기술 모두 BLE Advertise Packe의 최대 31Byte의 AdvData를 이용하여, 목적에 맞게 세부 데이터 구조를 정의한 것 뿐이다. iBeacon iBeacon은 2013년 애플에서 만들었고, 애플의 등록상표이다! 아래 그림과 같이 구성되며, 31Byte는 앞서 설명한대로 BLE Advertise Packet의 AdvData에 담겨지는 데이터이다. 별거 없다. 아주 단.."><link rel="canonical" href="https://blog.msalt.net/247"><meta property="og:type" content="article"><meta property="og:site_name" content="고마워서 만든 블로그 by 맛소금"><meta property="og:title" content="BLE iBeacon Eddystone packet format 분석 | 맛소금"><meta property="og:description" content="지난번에 BLE Advertise Packet 내용 자세히 알아보기에서 BLE Avertise Packet이 어떻게 구성되는지 확인했다. 그 내용은 BLE Spec에 따른 원론적인 내용이었고, 그 Spec을 지키면서 새로운 기술을 정의한 것이 Apple에서 만든 iBeacon과 Google에서 만든 Eddystone이다. 두 기술 모두 BLE Advertise Packe의 최대 31Byte의 AdvData를 이용하여, 목적에 맞게 세부 데이터 구조를 정의한 것 뿐이다. iBeacon iBeacon은 2013년 애플에서 만들었고, 애플의 등록상표이다! 아래 그림과 같이 구성되며, 31Byte는 앞서 설명한대로 BLE Advertise Packet의 AdvData에 담겨지는 데이터이다. 별거 없다. 아주 단.."><meta property="og:url" content="https://blog.msalt.net/247"><meta property="og:image" content="https://blog.msalt.net/images/posts/247/002.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/rss+xml" title="고마워서 만든 블로그 by 맛소금" href="/rss"><link rel="icon" href="/favicon.ico" sizes="any"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"고마워서 만든 블로그 by 맛소금","description":"개발, 책, 일상에 대한 기록","url":"https://blog.msalt.net"}</script><link rel="stylesheet" href="/_astro/TitleBanner.C9ln51x0.css"><style>.entry[data-astro-cid-ssdmjifj]{max-width:790px}.entry-content[data-astro-cid-ssdmjifj]{overflow-wrap:anywhere;font-family:Iropke Batang,Malgun Gothic,Tahoma,serif;font-size:18px;line-height:1.9}.entry-content[data-astro-cid-ssdmjifj] p{margin:0 0 20px}.entry-content[data-astro-cid-ssdmjifj] h2{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 22px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] h2[data-ke-size=size26]{font-size:29.16px;line-height:1.8}.entry-content[data-astro-cid-ssdmjifj] h3{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 18px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] img{max-height:none;margin:1.5em auto;display:block}.entry-content[data-astro-cid-ssdmjifj] blockquote{border-left:3px solid var(--green);color:#666;margin:1.4em 0;padding:4px 20px}.entry-content[data-astro-cid-ssdmjifj] pre{background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6;overflow:auto}.entry-content[data-astro-cid-ssdmjifj] code{font-family:Consolas,monospace}.entry-content[data-astro-cid-ssdmjifj] table{border-collapse:collapse;display:block;overflow-x:auto}.entry-content[data-astro-cid-ssdmjifj] th,.entry-content[data-astro-cid-ssdmjifj] td{border:1px solid #ddd;padding:8px 12px}.entry-content[data-astro-cid-ssdmjifj] iframe{max-width:100%}.entry-nav[data-astro-cid-ssdmjifj]{color:#666;border-top:1px solid #eee;justify-content:space-between;margin-top:50px;padding:22px 0;font-size:13px;display:flex}
+</style></head><body><header class="topbar" data-astro-cid-nen7h5rs><div class="topbar-inner" data-astro-cid-nen7h5rs><a class="brand" href="/" aria-label="고마워서 만든 블로그 by 맛소금" data-astro-cid-nen7h5rs><img src="/logo.png" alt="고마워서 만든 블로그 by 맛소금" width="151" height="32" data-astro-cid-nen7h5rs></a><div class="tools" data-astro-cid-nen7h5rs><details class="category-menu" data-astro-cid-nen7h5rs><summary data-astro-cid-nen7h5rs>분류 보기 <span aria-hidden="true" data-astro-cid-nen7h5rs>⌄</span></summary><nav class="category-panel" aria-label="카테고리" data-astro-cid-nen7h5rs><a href="/category/About%20Blog" data-astro-cid-nen7h5rs>About Blog</a><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-nen7h5rs>사람생각</a><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-nen7h5rs>초록이들</a><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-nen7h5rs>나의 경험담</a><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-nen7h5rs>감상문</a><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-nen7h5rs>만들기</a><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-nen7h5rs>육아와 가사</a><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-nen7h5rs>이달의 노래</a><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-nen7h5rs>좋은 씨앗</a><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-nen7h5rs>기술 이야기</a><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-nen7h5rs>타이젠 Tizen</a></nav></details><form class="search" action="/search" method="get" role="search" data-astro-cid-nen7h5rs><label class="sr-only" for="site-search" data-astro-cid-nen7h5rs>블로그 검색</label><input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" data-astro-cid-nen7h5rs><button type="submit" aria-label="검색" data-astro-cid-nen7h5rs><svg viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-nen7h5rs><circle cx="10.8" cy="10.8" r="6.4" data-astro-cid-nen7h5rs></circle><path d="m16 16 4.2 4.2" data-astro-cid-nen7h5rs></path></svg></button></form></div></div></header><section class="title-banner post-banner" aria-label="기술 이야기" data-astro-cid-hws4xp7b><div class="banner-inner" data-astro-cid-hws4xp7b><a class="eyebrow" href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-hws4xp7b>기술 이야기</a><h1 data-astro-cid-hws4xp7b>BLE iBeacon Eddystone packet format 분석</h1><p data-astro-cid-hws4xp7b>2018. 3. 31. 12:30</p></div></section><main class="site-main"><div class="main-column"><article class="entry" data-astro-cid-ssdmjifj><div class="entry-content" data-astro-cid-ssdmjifj><p>지난번에 <a href="http://blog.msalt.net/220">BLE Advertise Packet 내용 자세히 알아보기</a>에서 BLE Avertise Packet이 어떻게 구성되는지 확인했다. 그 내용은 BLE Spec에 따른 원론적인 내용이었고, 그 Spec을 지키면서 새로운 기술을 정의한 것이 <strong>Apple</strong>에서 만든 <code>iBeacon</code>과 <strong>Google</strong>에서 만든 <code>Eddystone</code>이다. <strong>두 기술 모두 BLE Advertise Packe의 최대 31Byte의 <code>AdvData</code>를 이용하여, 목적에 맞게 세부 데이터 구조를 정의한 것 뿐이다.</strong></p>
+<p><img src="/images/posts/247/002.jpg" alt=""></p>
+<h3 id="ibeacon">iBeacon</h3>
+<p><a href="https://ko.wikipedia.org/wiki/%EC%95%84%EC%9D%B4%EB%B9%84%EC%BD%98">iBeacon</a>은  2013년 애플에서 만들었고, 애플의 등록상표이다!
+아래 그림과 같이 구성되며, 31Byte는 앞서 설명한대로 BLE Advertise Packet의 <code>AdvData</code>에 담겨지는 데이터이다. 별거 없다. 아주 단순하다.</p>
+<p><img src="/images/posts/247/003.png" alt=""></p>
+<p><code>UUID</code>는 16Byte ID이지만 하나의 Beacon을 특정하는 고유 ID는 아니고, 특정 목적을 위해 생성된 ID라고 생각하면 좋을 것 같다. 각각 2Byte의 <code>Major</code> 와 <code>Minor</code> 필드를 두어서 비콘을 그룹단위로 구분할 때 사용할 수 있다. 예를 들자면, A라는 백화점이 비콘을 만들어서 매장 관리에 사용한다면, <code>UUID</code>는 A백화점의 비콘임을 구분하는 데 사용하고, <code>Major</code>는 지점명, <code>Minor</code>는 매장명을 구분하는 데 사용할 수 있다.</p>
+<p><code>iBeacon</code> Prefix에 들어가는 내용에 대해서는 그림에 나와있는 데이터를 가지고 설명을 해보겠다.
+16진수 <code>0x0201061AFF004C0215</code>가 Prefix에 들어있는데, <a href="http://blog.msalt.net/220">BLE Advertise Packet 내용 자세히 알아보기</a>에서 처럼 분석해 보자.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">데이터</th>
+<th style="text-align:center">내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0x02</td>
+<td style="text-align:center">다음에 오는 2Byte는 하나의 <a href="https://www.bluetooth.com/ko-kr/specifications/assigned-numbers/generic-access-profile">GAP</a> 정보임</td>
+</tr>
+<tr>
+<td style="text-align:center">0x01</td>
+<td style="text-align:center"><a href="https://www.bluetooth.com/ko-kr/specifications/assigned-numbers/generic-access-profile">GAP</a> 중에 <code><<Flags>></code> 정보임</td>
+</tr>
+<tr>
+<td style="text-align:center">0x06</td>
+<td style="text-align:center">5개의 비트는 장치의 특성을 나타내는데 일반 발견 모드, BT/EDR 미지원함을 뜻한다.</td>
+</tr>
+<tr>
+<td style="text-align:center">0x1A</td>
+<td style="text-align:center">다음에 오는 26Byte는 하나의 <a href="https://www.bluetooth.com/ko-kr/specifications/assigned-numbers/generic-access-profile">GAP</a> 정보임</td>
+</tr>
+<tr>
+<td style="text-align:center">0xFF</td>
+<td style="text-align:center"><a href="https://www.bluetooth.com/ko-kr/specifications/assigned-numbers/generic-access-profile">GAP</a> 중에 <code>«Manufacturer Specific Data»</code> 정보임</td>
+</tr>
+<tr>
+<td style="text-align:center">0x004C</td>
+<td style="text-align:center">회사 ID는 <code>Apple</code>임. 회사 ID는 등록된 <a href="https://www.bluetooth.com/ko-kr/specifications/assigned-numbers/company-identifiers">고유 식별자</a>다.</td>
+</tr>
+<tr>
+<td style="text-align:center">0x02</td>
+<td style="text-align:center">iBeacon을 의미함</td>
+</tr>
+<tr>
+<td style="text-align:center">0x15</td>
+<td style="text-align:center">남아있는 데이터는 21바이트라는 의미 (0x15 == 21)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="flags에-각각의-비트가-의미하는-내용은-다음과-같다"><code>&lt;&lt;Flags&gt;&gt;</code>에 각각의 비트가 의미하는 내용은 다음과 같다.</h4>
+<ul>
+<li>
+<p>비트 0, LE 모드 중  제한된 발견 모드 (Limited Discoverable Mode) 를 나타낸다.</p>
+</li>
+<li>
+<p>비트 1, LE 모드 중  일반 발견 모드(General Discoverable Mode) 를 나타낸다.</p>
+</li>
+<li>
+<p>비트 2, 예전 1, 2 버전의 블루투스 전송속도 BR/EDR 을 지원하지 않음을 나타낸다.</p>
+</li>
+<li>
+<p>비트 3, 같은 장치(Controller)에서 LE 와 BR/EDR 이 동시에 가능함을 나타낸다.</p>
+</li>
+<li>
+<p>비트 4, 같은 장치(Host)에서 LE 와 BR/EDR 이 동시에 가능함을 나타낸다.</p>
+</li>
+</ul>
+<h3 id="eddystone">Eddystone</h3>
+<p>2015년 구글에서 발표했으며 오픈소스 프로젝트이다. 차이점은 에디스톤은 <code>UID</code>, <code>URL</code>, <code>TLM</code> 세가지 타입이 있다. 기존 규격을 지키면서도 유연한 구조로 iOS와 Android 모두에서 잘 동작하는 것이 목표라고 한다.</p>
+<blockquote>
+<p>The design of Eddystone has been driven by several key goals:<br>
+- Works well with Android and iOS Bluetooth developer APIs<br>
+- Straightforward implementation on a wide range of existing BLE devices<br>
+- Flexible architecture permitting development of new frame types<br>
+- Fully compliant with the Bluetooth Core Specification</p>
+</blockquote>
+<p><img src="/images/posts/247/004.png" alt=""></p>
+<h4 id="eddystone-uid">Eddystone-UID</h4>
+<p>고유한 식별자를 가지고 비콘을 구분하는 것이 <code>iBeacon</code>과 비슷하다. 10바이트의 <code>Namespace</code>와 6바이트의 <code>Instance</code>로 구분된다.</p>
+<h4 id="eddystone-url">Eddystone-URL</h4>
+<p>앱이 아닌 브라우저와 연동되는 시나리오로 해당 URL로 브라우저가 접속한다. 아무곳이나 접속하면 안되므로, 알림 창에서 사용자의 확인을 받는 절차가 필요하다. 개인적으로 URL의 전송하는 컨셉은 신선했는데, 단순히 브라우저를 열어서 이동한다는 부분은 매우 식상했다. NFC나 QR코드로 URL 전송하는 것과 동일한 느낌이다.</p>
+<h4 id="eddystone-tlmtelemetry">Eddystone-TLM(Telemetry)</h4>
+<p>말그대로 원격측정 정보를 전달한다. 배터리 전압 (mV/bit 단위), 온도, 전송된 메시지 횟수, 시스템 시작 후 현재까지의 시간(0.1초 단위) 등의 정보를 전송한다. 패킷안에 고유 식별자가 없으므로 다른 패킷이 전달될 때 함께 전달하여 사용한다.</p>
+<h4 id="eddystone-eid">Eddystone-EID</h4>
+<p><strong>Ephemeral ID</strong>를 뜻하는 <code>EID</code> 형식은 암호화된 데이터를 보내는 방식인데, 암호화 키가 임시적이고, 주기적으로 계속 변경되어서 <strong>Ephemeral</strong>이라고 한다. 간단하게 설명하자면, OTP 기기가 시간 기반으로 비밀번호를 생성하는 것처럼 그렇게 생성된 비밀번호를 이용해서 데이터를 암호화해서 전송하고, 그 값을 알고있는 자만이 복호화 할 수 있다는 컨셉이다. 개인적으로 매우 흥미로운 내용이다.</p>
+<h4 id="참조-사진-출처">참조, 사진 출처</h4>
+<p><a href="http://blog.naver.com/PostView.nhn?blogId=juke45ef&amp;logNo=220834142021&amp;parentCategoryNo=&amp;categoryNo=&amp;viewDate=&amp;isShowPopularPosts=false&amp;from=postView">BLE 비콘</a></p>
+<p><a href="https://os.mbed.com/blog/entry/BLE-Beacons-URIBeacon-AltBeacons-iBeacon/">Understanding the different types of BLE Beacons</a></p>
+<p><a href="https://developer.apple.com/ibeacon/Getting-Started-with-iBeacon.pdf">Getting Started with iBeacon</a></p>
+<p><a href="https://github.com/google/eddystone">Eddystone</a></p>
+<p><a href="https://developers-kr.googleblog.com/2016/05/eddystone-eid.html">Eddystone-EID: 안전한 공개 비콘 형식</a></p>
+<p><a href="https://os.mbed.com/teams/Bluetooth-Low-Energy/code/BLE_EddystoneBeacon_Service/">BLE_EddystoneBeacon_Service</a></p>
+</div><nav class="entry-nav" data-astro-cid-ssdmjifj><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-ssdmjifj>← 기술 이야기의 다른 글</a><a href="/" data-astro-cid-ssdmjifj>처음으로 ↑</a></nav></article></div><aside class="sidebar" aria-label="블로그 메뉴" data-astro-cid-wv7whodv><figure class="blog-image" data-astro-cid-wv7whodv><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" data-astro-cid-wv7whodv></figure><section class="intro" data-astro-cid-wv7whodv><p class="intro-copy" data-astro-cid-wv7whodv>그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p><blockquote class="poem" data-astro-cid-wv7whodv><p data-astro-cid-wv7whodv>종은 누가 그걸 울리기 전에는<br data-astro-cid-wv7whodv>종이 아니다.</p><p data-astro-cid-wv7whodv>노래는 누가 그러 부르기 전에는<br data-astro-cid-wv7whodv>노래가 아니다.</p><p data-astro-cid-wv7whodv>당신의 마음속에 있는 사랑도<br data-astro-cid-wv7whodv>한쪽으로 치워 놓아선 안된다.</p><p data-astro-cid-wv7whodv>사랑은 주기 전에는 사랑이 아니니까.</p><cite data-astro-cid-wv7whodv>— 오스카 햄머스타인</cite></blockquote></section><section class="categories" data-astro-cid-wv7whodv><h2 data-astro-cid-wv7whodv>카테고리</h2><ul data-astro-cid-wv7whodv><li data-astro-cid-wv7whodv><a href="/category/About%20Blog" data-astro-cid-wv7whodv>About Blog<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-wv7whodv>사람생각<span data-astro-cid-wv7whodv>32</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-wv7whodv>초록이들<span data-astro-cid-wv7whodv>12</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-wv7whodv>나의 경험담<span data-astro-cid-wv7whodv>52</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-wv7whodv>감상문<span data-astro-cid-wv7whodv>78</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-wv7whodv>만들기<span data-astro-cid-wv7whodv>21</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-wv7whodv>육아와 가사<span data-astro-cid-wv7whodv>10</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-wv7whodv>이달의 노래<span data-astro-cid-wv7whodv>20</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-wv7whodv>좋은 씨앗<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-wv7whodv>기술 이야기<span data-astro-cid-wv7whodv>49</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-wv7whodv>타이젠 Tizen<span data-astro-cid-wv7whodv>18</span></a></li></ul></section><a class="side-link" href="/rss" data-astro-cid-wv7whodv>RSS 구독 <span aria-hidden="true" data-astro-cid-wv7whodv>↗</span></a></aside></main><footer data-astro-cid-jo6i4kqk><div data-astro-cid-jo6i4kqk><a href="/" data-astro-cid-jo6i4kqk>고마워서 만든 블로그 by 맛소금</a><span data-astro-cid-jo6i4kqk>© 2026 맛소금</span></div></footer></body></html>

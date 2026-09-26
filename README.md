@@ -15,7 +15,7 @@
 - Astro 정적 사이트
 - Markdown 게시글과 frontmatter
 - GitHub 저장소: `msaltnet/blog-msalt-net`
-- 호스팅: Cloudflare Pages를 우선 대상으로 구성합니다. 기존 글 주소가 `/355`처럼 확장자·후행 슬래시 없이 유지되며, Cloudflare Pages는 출력된 `.html` 파일을 확장자 없는 URL로 제공합니다.
+- 호스팅: GitHub Pages를 사용하며, 정적 빌드 산출물은 저장소 루트의 `docs/`에 생성합니다. 저장소 Settings → Pages에서 배포 소스로 `Deploy from a branch`, 브랜치의 `/docs` 폴더를 선택합니다.
 
 ## 로컬 개발
 
@@ -26,7 +26,7 @@ npm install
 npm run dev
 ```
 
-정적 사이트를 출력하려면 `npm run build`를 실행합니다. 글 목록·댓글·이미지의 출처와 변환 보고서는 아래 명령으로 점검합니다.
+정적 사이트를 `docs/`에 출력하려면 `npm run build`를 실행합니다. 빌드할 때 `docs/`의 기존 파일은 모두 정적 산출물로 교체되므로 소스 문서는 `migration/`에 둡니다. 글 목록·이미지의 출처와 변환 보고서는 아래 명령으로 점검합니다.
 
 ```powershell
 python scripts/verify.py
@@ -70,8 +70,8 @@ scripts/
 - `/355`처럼 게시물 번호가 연속적이지 않으므로 번호를 추정하지 않고 실제 URL을 수집합니다.
 - 현재 공개된 게시물 URL 예시는 `/360`이며, 첨부된 계획의 `/355`도 기존 URL 예시로 보존 대상에 포함합니다.
 - 320건의 HTML 백업(약 13 MB)과 이미지 1,757개(약 613 MB)를 로컬 `backup/`에 저장했고 이번 수집에서 실패는 없었습니다. 공통 사이트 이미지도 게시물별로 반복되어 최종 사이트에는 본문 이미지만 옮깁니다.
-- 공개 HTML에는 댓글 본문이 포함되지 않고 Tistory 프런트엔드 endpoint에서 동적으로 불러옵니다. 현재 브라우저 스크립트가 쓰는 읽기 endpoint를 확인해 댓글 172건을 정적 JSON/CSV로 백업했습니다. 한 게시글은 사이트가 표시한 댓글 수보다 endpoint가 한 건 적게 반환했습니다.
-- 320개 Markdown 파일과 댓글 파일, 본문 이미지 797개를 생성했습니다. 변환 과정과 확인 결과는 `migration/conversion-report.json` 및 `python scripts/verify.py` 출력으로 추적합니다.
+- 새 사이트에는 댓글 기능을 두지 않으며, 기존 댓글 데이터도 이관 대상에서 제외했습니다. 게시물 원본 HTML과 이미지는 변환 검수용 로컬 백업으로 보존합니다.
+- 320개 Markdown 파일과 본문 이미지 797개를 생성했습니다. 변환 과정과 확인 결과는 `migration/conversion-report.json` 및 `python scripts/verify.py` 출력으로 추적합니다.
 - 11개 카테고리 경로와 태그 703개의 `/tag/...` 경로를 정적으로 생성합니다. 목록의 기존 `?page=N` 주소는 브라우저에서 20개씩 나누어 표시합니다. `/m/...` 모바일 주소는 같은 게시물의 기본 주소로 301 연결합니다.
 - GitHub 저장소는 아직 커밋이 없는 빈 저장소입니다. 초기 콘텐츠가 준비되면 이 프로젝트 디렉터리를 해당 저장소의 서브모듈로 연결합니다.
 

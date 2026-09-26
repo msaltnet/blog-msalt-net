@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.5"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;500;700;800&family=Raleway:wght@400&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/font-iropke-batang/1.2/font-iropke-batang.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"[T.Viewer 개발일기] 12. Optimization","datePublished":"2020-08-09T04:47:34.000Z","description":"Tizen Log Viewer 개발이 어느덧? 끝나간다. 아직 넣고 싶은 기능은 많지만, 그것을 내가 결정하기 보다는 주요 기능을 갖추고 얼른 사용자들 손에 쥐어준 다음 뒷일을 결정하기로 했다. 요즘 개발 트렌드.ㅎ 마지막으로 마무리 하는 과정에서 있었던 몇 가지 이야기를 정리해 봤다. resource pre-load boilerplate 코드의 index.html파일을 보면 아래와 같이, font를 CDN으로부터 받아오도록 되어 있다. 용량도 얼마 안되는거 바이너리에 포함시키자. 오프라인에서도 잘 쓸 수 있게. 일단 아이콘 폰트는 Material Design Icons를 사용하고 있는데, 이 부분은 공식 사이트에 가이드가 잘 되어 있다. src/plugins/vuetify.js 구조가 왜 있나 했는데,..","mainEntityOfPage":"https://blog.msalt.net/312","image":"https://blog.msalt.net/images/posts/312/002.png"}</script><title>[T.Viewer 개발일기] 12. Optimization | 맛소금</title><meta name="description" content="Tizen Log Viewer 개발이 어느덧? 끝나간다. 아직 넣고 싶은 기능은 많지만, 그것을 내가 결정하기 보다는 주요 기능을 갖추고 얼른 사용자들 손에 쥐어준 다음 뒷일을 결정하기로 했다. 요즘 개발 트렌드.ㅎ 마지막으로 마무리 하는 과정에서 있었던 몇 가지 이야기를 정리해 봤다. resource pre-load boilerplate 코드의 index.html파일을 보면 아래와 같이, font를 CDN으로부터 받아오도록 되어 있다. 용량도 얼마 안되는거 바이너리에 포함시키자. 오프라인에서도 잘 쓸 수 있게. 일단 아이콘 폰트는 Material Design Icons를 사용하고 있는데, 이 부분은 공식 사이트에 가이드가 잘 되어 있다. src/plugins/vuetify.js 구조가 왜 있나 했는데,.."><link rel="canonical" href="https://blog.msalt.net/312"><meta property="og:type" content="article"><meta property="og:site_name" content="고마워서 만든 블로그 by 맛소금"><meta property="og:title" content="[T.Viewer 개발일기] 12. Optimization | 맛소금"><meta property="og:description" content="Tizen Log Viewer 개발이 어느덧? 끝나간다. 아직 넣고 싶은 기능은 많지만, 그것을 내가 결정하기 보다는 주요 기능을 갖추고 얼른 사용자들 손에 쥐어준 다음 뒷일을 결정하기로 했다. 요즘 개발 트렌드.ㅎ 마지막으로 마무리 하는 과정에서 있었던 몇 가지 이야기를 정리해 봤다. resource pre-load boilerplate 코드의 index.html파일을 보면 아래와 같이, font를 CDN으로부터 받아오도록 되어 있다. 용량도 얼마 안되는거 바이너리에 포함시키자. 오프라인에서도 잘 쓸 수 있게. 일단 아이콘 폰트는 Material Design Icons를 사용하고 있는데, 이 부분은 공식 사이트에 가이드가 잘 되어 있다. src/plugins/vuetify.js 구조가 왜 있나 했는데,.."><meta property="og:url" content="https://blog.msalt.net/312"><meta property="og:image" content="https://blog.msalt.net/images/posts/312/002.png"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/rss+xml" title="고마워서 만든 블로그 by 맛소금" href="/rss"><link rel="icon" href="/favicon.ico" sizes="any"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"고마워서 만든 블로그 by 맛소금","description":"개발, 책, 일상에 대한 기록","url":"https://blog.msalt.net"}</script><link rel="stylesheet" href="/_astro/TitleBanner.C9ln51x0.css"><style>.entry[data-astro-cid-ssdmjifj]{max-width:790px}.entry-content[data-astro-cid-ssdmjifj]{overflow-wrap:anywhere;font-family:Iropke Batang,Malgun Gothic,Tahoma,serif;font-size:18px;line-height:1.9}.entry-content[data-astro-cid-ssdmjifj] p{margin:0 0 20px}.entry-content[data-astro-cid-ssdmjifj] h2{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 22px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] h2[data-ke-size=size26]{font-size:29.16px;line-height:1.8}.entry-content[data-astro-cid-ssdmjifj] h3{color:#333;margin:30px 0 10px;padding:0 0 0 10px;font:600 18px/1.8 Malgun Gothic,Tahoma,sans-serif}.entry-content[data-astro-cid-ssdmjifj] img{max-height:none;margin:1.5em auto;display:block}.entry-content[data-astro-cid-ssdmjifj] blockquote{border-left:3px solid var(--green);color:#666;margin:1.4em 0;padding:4px 20px}.entry-content[data-astro-cid-ssdmjifj] pre{background:#f6f6f6;padding:18px;font-size:13px;line-height:1.6;overflow:auto}.entry-content[data-astro-cid-ssdmjifj] code{font-family:Consolas,monospace}.entry-content[data-astro-cid-ssdmjifj] table{border-collapse:collapse;display:block;overflow-x:auto}.entry-content[data-astro-cid-ssdmjifj] th,.entry-content[data-astro-cid-ssdmjifj] td{border:1px solid #ddd;padding:8px 12px}.entry-content[data-astro-cid-ssdmjifj] iframe{max-width:100%}.entry-nav[data-astro-cid-ssdmjifj]{color:#666;border-top:1px solid #eee;justify-content:space-between;margin-top:50px;padding:22px 0;font-size:13px;display:flex}
+</style></head><body><header class="topbar" data-astro-cid-nen7h5rs><div class="topbar-inner" data-astro-cid-nen7h5rs><a class="brand" href="/" aria-label="고마워서 만든 블로그 by 맛소금" data-astro-cid-nen7h5rs><img src="/logo.png" alt="고마워서 만든 블로그 by 맛소금" width="151" height="32" data-astro-cid-nen7h5rs></a><div class="tools" data-astro-cid-nen7h5rs><details class="category-menu" data-astro-cid-nen7h5rs><summary data-astro-cid-nen7h5rs>분류 보기 <span aria-hidden="true" data-astro-cid-nen7h5rs>⌄</span></summary><nav class="category-panel" aria-label="카테고리" data-astro-cid-nen7h5rs><a href="/category/About%20Blog" data-astro-cid-nen7h5rs>About Blog</a><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-nen7h5rs>사람생각</a><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-nen7h5rs>초록이들</a><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-nen7h5rs>나의 경험담</a><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-nen7h5rs>감상문</a><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-nen7h5rs>만들기</a><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-nen7h5rs>육아와 가사</a><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-nen7h5rs>이달의 노래</a><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-nen7h5rs>좋은 씨앗</a><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-nen7h5rs>기술 이야기</a><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-nen7h5rs>타이젠 Tizen</a></nav></details><form class="search" action="/search" method="get" role="search" data-astro-cid-nen7h5rs><label class="sr-only" for="site-search" data-astro-cid-nen7h5rs>블로그 검색</label><input id="site-search" type="search" name="q" placeholder="Search" autocomplete="off" data-astro-cid-nen7h5rs><button type="submit" aria-label="검색" data-astro-cid-nen7h5rs><svg viewBox="0 0 24 24" aria-hidden="true" data-astro-cid-nen7h5rs><circle cx="10.8" cy="10.8" r="6.4" data-astro-cid-nen7h5rs></circle><path d="m16 16 4.2 4.2" data-astro-cid-nen7h5rs></path></svg></button></form></div></div></header><section class="title-banner post-banner" aria-label="나의 경험담" data-astro-cid-hws4xp7b><div class="banner-inner" data-astro-cid-hws4xp7b><a class="eyebrow" href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-hws4xp7b>나의 경험담</a><h1 data-astro-cid-hws4xp7b>[T.Viewer 개발일기] 12. Optimization</h1><p data-astro-cid-hws4xp7b>2020. 8. 9. 13:47</p></div></section><main class="site-main"><div class="main-column"><article class="entry" data-astro-cid-ssdmjifj><div class="entry-content" data-astro-cid-ssdmjifj><p>Tizen Log Viewer 개발이 어느덧? 끝나간다. 아직 넣고 싶은 기능은 많지만, 그것을 내가 결정하기 보다는 주요 기능을 갖추고 얼른 사용자들 손에 쥐어준 다음 뒷일을 결정하기로 했다. 요즘 개발 트렌드.ㅎ</p>
+<p>마지막으로 마무리 하는 과정에서 있었던 몇 가지 이야기를 정리해 봤다.</p>
+<h2 id="resource-pre-load">resource pre-load</h2>
+<p>boilerplate 코드의 <code>index.html</code>파일을 보면 아래와 같이, font를 CDN으로부터 받아오도록 되어 있다. 용량도 얼마 안되는거 바이너리에 포함시키자. 오프라인에서도 잘 쓸 수 있게.</p>
+<pre class="prettyprint routeros"><code>    &lt;link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css"&gt;
+</code></pre>
+<p>일단 아이콘 폰트는 <em>Material Design Icons</em>를 사용하고 있는데, 이 부분은 공식 사이트에 가이드가 잘 되어 있다. <code>src/plugins/vuetify.js</code> 구조가 왜 있나 했는데, 이런 식으로 Vuetify를 확장해서 사용하는 방법이라는 것을 이제서야 알게되었다.ㅋ 뭐, 워낙 잘되어 있어서…^^;</p>
+<p><a href="https://vuetifyjs.com/ko/customization/icons/#install-material-design-icons">Install Material Design Icons</a></p>
+<pre class="prettyprint javascript"><code>// src/plugins/vuetify.js
+
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+import Vue from 'vue'
+import Vuetify from 'vuetify/lib'
+
+Vue.use(Vuetify)
+
+export default new Vuetify({
+  icons: {
+    iconfont: 'mdi', // default - only for display purposes
+  },
+})
+</code></pre>
+<p>다음으로 <em>Roboto 폰트</em> 역시 로컬에 설치해주고,</p>
+<pre class="prettyprint elm"><code>    npm install typeface-roboto --save
+</code></pre>
+<p>아까 그 위치에서 로드해 주었다.</p>
+<pre class="prettyprint aspectj"><code>// src/plugins/vuetify.js
+
+import 'typeface-roboto/index.css'
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+</code></pre>
+<p>로딩 시간을 줄일 수 있기도 하지만, 만약에 CDN의 리소스가 변경되면, 개발하면서 확인된 폰트와 아이콘과는 다른 UI가 보여질 수도 있기 때문에 하위호환성이 확실히 보장되지 않는 lib이나 리소스는 다운로드해서 패키지에 넣거나, 내 서버에 따로 올려둔다.</p>
+<h2 id="icon">icon</h2>
+<p>아이콘에서 최적화를 논할만한 내용은 아닐 수도 있지만, 품질을 위해서 중요한 부분이 있다. 아이콘은 두군데에서 처리가 필요하다. 하나는 파일에 사용되는 아이콘이고, 다른 하나는 프로그램이 실행될 때 사용되는 아이콘이다.</p>
+<p>전자는 <code>packaging</code>과 관련되어 있기 때문에 builder를 어떤것을 사용하는 지에 따라서 설정 방법이 다르다. 나는 약간의 시행착오를 거쳐 <code>vue.config.js</code>에서 설정해 주었다. <strong>패키징 관련된 부분이기 때문에 플랫폼마다 다른 파일이 요구된다.</strong> 클라우드 변환 사이트가 많으니 편하게 사용하면 된다.</p>
+<pre class="prettyprint less"><code>  builderOptions: {
+    appId: 't.viewer',
+    asar: false,
+    productName: 'T.Veiwer',
+    win: {
+      target: [
+        {
+            target: 'portable',
+            arch: [
+            'x64',
+            ],
+        },
+      ],
+      icon: 'assets/icons/icon.ico'
+    },
+    linux: {
+      target: [
+        {
+            target: 'AppImage',
+            arch: [
+            'x64',
+            ],
+        },
+      ],
+      icon: 'assets/icons/icon.png'
+    },
+  },
+</code></pre>
+<p>다음으로 런타임에 사용되는 아이콘은 <code>BrowserWindow</code>를 생성할 때 설정해줘야 한다.</p>
+<pre class="prettyprint processing"><code>    // Create the browser window.
+    let iconPath = 'assets/icons/icon.ico';
+
+    // linux AppImage
+    if (process.platform !== 'win32') {
+        if (process.env.WEBPACK_DEV_SERVER_URL)
+            iconPath = 'assets/icons/icon.png';
+        else
+            iconPath = path.join(__dirname, '../../tviewer.png');
+    }
+
+    win = new BrowserWindow({
+        width: 1024, height: 700,
+        webPreferences: {
+            nodeIntegration: true
+        },
+        icon: iconPath,
+        show: false
+    })
+    mainWindowState.manage(win);
+</code></pre>
+<p>이 부분이 중요한데, 여기에서 <code>png</code> 포맷을 사용하는 가이드도 많던데, <code>png</code>를 쓰면 아무리 고 해상도를 해도 프로그램 아이콘이 찌그러진다. 런타임에 리사이징을 하려다보니 퀄리티가 떨어지는 것으로, 가능하면, multi-size <code>ico</code>를 만들어서 설정하는 것을 추천한다.</p>
+<p>이 시점에 문제가! 리눅스는 <code>png</code>를 사용해야 해야 해서 플랫폼 분기문이 들어갔는데, <code>AppImage</code>로 배포하려니 배포패키지에서 자꾸 아이콘을 못찾아오는 이슈가 있다. 관련된 이슈가 엄청 많은걸보니 에휴…적당히 workaround 적용해 주었는데, 리눅스의 경우 package에서 실행될 때와 <code>npm run serve</code>로 실행될 때 또 달라서, 분기문이 또 들어갔다.</p>
+<p><img src="/images/posts/312/002.png" alt=""></p>
+<p>아이콘 해상도 차이 스크린샷</p>
+<p><strong>32px을 포함하는 ico 파일을 사용했을 때 확실히 품질이 좋았다. <code>window 10</code>에서!</strong></p>
+<h2 id="keep-preference">keep preference</h2>
+<p>폰트 사이즈랑 텝 정보들을 기억해 두었다가 다시 꺼내줬야 한다. 당연한 기능인데ㅎ 사용하는데 문제는 없도록 다른 기능을 모두 다 작성하고 추가하였다. 어떤 유용한 모듈이 있을까 검색해 봤다.</p>
+<p><a href="https://www.npmtrends.com/electron-config-vs-electron-settings-vs-electron-store">electron-config vs electron-settings vs electron-store</a></p>
+<p><img src="/images/posts/312/003.png" alt=""></p>
+<p><a href="https://www.npmtrends.com/electron-config-vs-electron-settings-vs-electron-store">https://www.npmtrends.com/electron-config-vs-electron-settings-vs-electron-store</a></p>
+<p>기세가 좋은 <strong>electron-store</strong>를 적용했다. <strong>모듈 분리가 잘 되어 있고, 기능과 데이터도 분리가 잘 되어 있어서 적용이 매우 쉬웠다!</strong></p>
+<p>거의 다 했는데, 윈도우 사이즈가 매번 초기화 된다. <a href="https://www.npmjs.com/package/electron-window-state">electron-window-state</a> 이런 모듈이 있네? 허허. 좋구만. 마지막 위치까지 기억해주는 구만ㅋ</p>
+<pre class="prettyprint yaml"><code>    // Load the previous state with fallback to defaults
+    let mainWindowState = windowStateKeeper({
+        defaultWidth: 1024,
+        defaultHeight: 768
+    });
+
+    win = new BrowserWindow({
+        'x': mainWindowState.x,
+        'y': mainWindowState.y,
+        'width': mainWindowState.width,
+        'height': mainWindowState.height,
+        webPreferences: {
+            nodeIntegration: true
+        },
+        icon: iconPath,
+        show: false
+    })
+</code></pre>
+<h2 id="마치며">마치며</h2>
+<p>최적화라고 말하기도 민망한 내용들이다. 그 만큼 별 내용이 없었다는? 쉽고 빠르게 개발 할 수 있어서 좋았다. <strong>진짜 최적화는 공개 후 올라오는 이슈들을 상대하면서 진행하게 될듯…</strong></p>
+</div><nav class="entry-nav" data-astro-cid-ssdmjifj><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-ssdmjifj>← 나의 경험담의 다른 글</a><a href="/" data-astro-cid-ssdmjifj>처음으로 ↑</a></nav></article></div><aside class="sidebar" aria-label="블로그 메뉴" data-astro-cid-wv7whodv><figure class="blog-image" data-astro-cid-wv7whodv><img src="/images/sidebar/blog-image.jpg" alt="블로그 이미지, 글귀를 새긴 벽" width="1024" height="1024" loading="lazy" data-astro-cid-wv7whodv></figure><section class="intro" data-astro-cid-wv7whodv><p class="intro-copy" data-astro-cid-wv7whodv>그 간 블로그로 받은 큰 도움이 고마워서 저도 블로그를 만들었습니다. 누군가에게 작은 도움이라도 되길 바라는 마음입니다.</p><blockquote class="poem" data-astro-cid-wv7whodv><p data-astro-cid-wv7whodv>종은 누가 그걸 울리기 전에는<br data-astro-cid-wv7whodv>종이 아니다.</p><p data-astro-cid-wv7whodv>노래는 누가 그러 부르기 전에는<br data-astro-cid-wv7whodv>노래가 아니다.</p><p data-astro-cid-wv7whodv>당신의 마음속에 있는 사랑도<br data-astro-cid-wv7whodv>한쪽으로 치워 놓아선 안된다.</p><p data-astro-cid-wv7whodv>사랑은 주기 전에는 사랑이 아니니까.</p><cite data-astro-cid-wv7whodv>— 오스카 햄머스타인</cite></blockquote></section><section class="categories" data-astro-cid-wv7whodv><h2 data-astro-cid-wv7whodv>카테고리</h2><ul data-astro-cid-wv7whodv><li data-astro-cid-wv7whodv><a href="/category/About%20Blog" data-astro-cid-wv7whodv>About Blog<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%82%AC%EB%9E%8C%EC%83%9D%EA%B0%81" data-astro-cid-wv7whodv>사람생각<span data-astro-cid-wv7whodv>32</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%B4%88%EB%A1%9D%EC%9D%B4%EB%93%A4" data-astro-cid-wv7whodv>초록이들<span data-astro-cid-wv7whodv>12</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%82%98%EC%9D%98%20%EA%B2%BD%ED%97%98%EB%8B%B4" data-astro-cid-wv7whodv>나의 경험담<span data-astro-cid-wv7whodv>52</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B0%90%EC%83%81%EB%AC%B8" data-astro-cid-wv7whodv>감상문<span data-astro-cid-wv7whodv>78</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EB%A7%8C%EB%93%A4%EA%B8%B0" data-astro-cid-wv7whodv>만들기<span data-astro-cid-wv7whodv>21</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9C%A1%EC%95%84%EC%99%80%20%EA%B0%80%EC%82%AC" data-astro-cid-wv7whodv>육아와 가사<span data-astro-cid-wv7whodv>10</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%9D%B4%EB%8B%AC%EC%9D%98%20%EB%85%B8%EB%9E%98" data-astro-cid-wv7whodv>이달의 노래<span data-astro-cid-wv7whodv>20</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EC%A2%8B%EC%9D%80%20%EC%94%A8%EC%95%97" data-astro-cid-wv7whodv>좋은 씨앗<span data-astro-cid-wv7whodv>14</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%EA%B8%B0%EC%88%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0" data-astro-cid-wv7whodv>기술 이야기<span data-astro-cid-wv7whodv>49</span></a></li><li data-astro-cid-wv7whodv><a href="/category/%ED%83%80%EC%9D%B4%EC%A0%A0%20Tizen" data-astro-cid-wv7whodv>타이젠 Tizen<span data-astro-cid-wv7whodv>18</span></a></li></ul></section><a class="side-link" href="/rss" data-astro-cid-wv7whodv>RSS 구독 <span aria-hidden="true" data-astro-cid-wv7whodv>↗</span></a></aside></main><footer data-astro-cid-jo6i4kqk><div data-astro-cid-jo6i4kqk><a href="/" data-astro-cid-jo6i4kqk>고마워서 만든 블로그 by 맛소금</a><span data-astro-cid-jo6i4kqk>© 2026 맛소금</span></div></footer></body></html>
