@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TitleBanner from '../components/TitleBanner.astro';
 ---
-<BaseLayout title={`검색 결과 | 고마워서 만든 블로그 by 맛소금`}>
+<BaseLayout title={`검색 결과 | 고마워서 만든 블로그 by 맛소금`} noindex>
   <TitleBanner slot="banner" title="검색 결과" eyebrow="검색" />
   <section class="search-results" aria-live="polite" aria-busy="true">
     <p class="query-label"></p>

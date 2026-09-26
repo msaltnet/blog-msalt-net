@@ -52,9 +52,9 @@ def main() -> int:
     if conversion.get("posts_generated") != len(posts):
         errors.append("Conversion report post count does not match inventory")
 
-    dist = ROOT / "dist"
+    dist = ROOT / "docs"
     if not dist.is_dir():
-        errors.append("No dist/ directory; build the Astro site before route verification")
+        errors.append("No docs/ directory; build the Astro site before route verification")
     else:
         for post_id in post_ids:
             route = dist / f"{post_id}.html"
@@ -95,8 +95,8 @@ def main() -> int:
     print(f"Inventory posts: {len(posts)}; categories: {len(categories)}")
     print(f"HTML backups: {len(backup_ids)}; Markdown posts: {len(markdown_ids)}")
     print(f"Localized image references: {len(localized_references)}; remote image references: {len(remote_images)}")
-    if (ROOT / "dist").is_dir():
-        print(f"Static output: {len(list((ROOT / 'dist').glob('*.html')))} root HTML pages; tag routes: {len(list((ROOT / 'dist/tag').glob('*.html')))}")
+    if dist.is_dir():
+        print(f"Static output: {len(list(dist.glob('*.html')))} root HTML pages; tag routes: {len(list((dist / 'tag').glob('*.html')))}")
     if remote_images:
         print(f"Remote image references requiring review: {len(remote_images)}")
         for value in remote_images[:20]:
