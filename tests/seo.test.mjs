@@ -39,3 +39,10 @@ test('search results are excluded from indexing', async () => {
   const html = await readPage('search.html');
   assert.match(meta(html, 'name', 'robots'), /noindex/);
 });
+
+test('custom domain is part of the source and built site', async () => {
+  const source = await readFile(new URL('../public/CNAME', import.meta.url), 'utf8');
+  const built = await readFile(new URL('CNAME', output), 'utf8');
+  assert.equal(source.trim(), 'blog.msalt.net');
+  assert.equal(built.trim(), source.trim());
+});
