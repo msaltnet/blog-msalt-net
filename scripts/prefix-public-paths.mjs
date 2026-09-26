@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const outputDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
-const base = process.env.SITE_BASE ?? '/blog-msalt-net';
+const base = process.env.SITE_BASE ?? '/';
 const prefix = base === '/' ? '' : `/${base.replace(/^\/+|\/+$/g, '')}`;
 
 async function processDirectory(directory) {

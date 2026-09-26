@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
-const base = process.env.SITE_BASE ?? (process.env.NODE_ENV === 'production' ? '/blog-msalt-net' : '/');
+const base = process.env.SITE_BASE ?? '/';
 
 export default defineConfig({
   site: 'https://blog.msalt.net',

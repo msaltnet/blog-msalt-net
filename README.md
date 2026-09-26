@@ -15,7 +15,7 @@
 - Astro 정적 사이트
 - Markdown 게시글과 frontmatter
 - GitHub 저장소: `msaltnet/blog-msalt-net`
-- 호스팅: GitHub Pages를 사용하며, 정적 빌드 산출물은 저장소 루트의 `docs/`에 생성합니다. 저장소 Settings → Pages에서 배포 소스로 `Deploy from a branch`, 브랜치의 `/docs` 폴더를 선택합니다. 기본 빌드는 프로젝트 페이지 경로 `/blog-msalt-net/`을 사용합니다.
+- 호스팅: GitHub Pages를 사용하며, 정적 빌드 산출물은 저장소 루트의 `docs/`에 생성합니다. 저장소 Settings → Pages에서 배포 소스로 `Deploy from a branch`, 브랜치의 `/docs` 폴더를 선택합니다. `public/CNAME`의 커스텀 도메인 `blog.msalt.net`에 맞춰 기본 빌드는 루트 경로 `/`를 사용합니다.
 
 ## 로컬 개발
 
@@ -26,7 +26,7 @@ npm install
 npm run dev
 ```
 
-정적 사이트를 `docs/`에 출력하려면 `npm run build`를 실행합니다. 빌드할 때 `docs/`의 기존 파일은 모두 정적 산출물로 교체되므로 소스 문서는 `migration/`에 둡니다. `blog.msalt.net` 커스텀 도메인 연결 후 루트 경로로 배포할 때는 PowerShell에서 `$env:SITE_BASE='/'`를 설정한 뒤 빌드합니다. 개발 서버는 기본적으로 루트 경로를 사용합니다. 글 목록·이미지의 출처와 변환 보고서는 아래 명령으로 점검합니다.
+정적 사이트를 `docs/`에 출력하려면 `npm run build`를 실행합니다. 빌드할 때 `docs/`의 기존 파일은 모두 정적 산출물로 교체되므로 소스 문서는 `migration/`에 둡니다. 기본 빌드는 커스텀 도메인의 루트 경로를 사용합니다. 별도 프로젝트 경로에서 미리 볼 때만 PowerShell에서 `$env:SITE_BASE='/blog-msalt-net'`을 설정합니다. 개발 서버도 기본적으로 루트 경로를 사용합니다. 글 목록·이미지의 출처와 변환 보고서는 아래 명령으로 점검합니다.
 
 ```powershell
 python scripts/verify.py

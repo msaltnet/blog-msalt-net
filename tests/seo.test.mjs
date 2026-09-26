@@ -46,3 +46,12 @@ test('custom domain is part of the source and built site', async () => {
   assert.equal(source.trim(), 'blog.msalt.net');
   assert.equal(built.trim(), source.trim());
 });
+
+test('custom domain pages load assets and links from the domain root', async () => {
+  const home = await readPage('index.html');
+  const post = await readPage('101.html');
+  assert.match(home, /href="\/_astro\/[^\"]+\.css"/);
+  assert.match(home, /href="\/category\//);
+  assert.match(post, /src="\/images\/posts\/101\/002\.jpg"/);
+  assert.doesNotMatch(home + post, /\/blog-msalt-net\//);
+});
