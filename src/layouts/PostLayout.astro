@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { render } from 'astro:content';
 import TitleBanner from '../components/TitleBanner.astro';
+import ResponsiveAd from '../components/ResponsiveAd.astro';
 import { site } from '../data/site';
 import { withBase } from '../utils/paths';
 const { post, isHome = false } = Astro.props;
@@ -10,7 +11,10 @@ const { title, date, category, description, coverImage, id } = post.data;
 ---
 <BaseLayout title={isHome ? site.title : `${title} | 맛소금`} description={isHome ? site.description : description} canonical={isHome ? '/' : `/${id}`} image={isHome ? '' : coverImage} imageAlt={title} type={isHome ? 'website' : 'article'}>
   <TitleBanner slot="banner" title={title} eyebrow={category} subtitle={new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Seoul'}).format(date)} isPost />
-  <article class="entry"><div class="entry-content"><Content /></div>{!isHome && <nav class="entry-nav"><a href={withBase(`/category/${encodeURIComponent(category)}`)}>← {category}의 다른 글</a><a href={withBase('/')}>처음으로 ↑</a></nav>}</article>
+  <article class="entry"><div class="entry-content"><ResponsiveAd slot="7434954668" /><Content /><ResponsiveAd slot="2613216283" /></div>{!isHome && <nav class="entry-nav"><a href={withBase(`/category/${encodeURIComponent(category)}`)}>← {category}의 다른 글</a><a href={withBase('/')}>처음으로 ↑</a></nav>}</article>
+  <Fragment slot="head">
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7998090459933600" crossorigin="anonymous"></script>
+  </Fragment>
   {!isHome && <Fragment slot="head">
     <meta property="article:published_time" content={date.toISOString()} />
     <meta property="article:author" content={site.author} />
